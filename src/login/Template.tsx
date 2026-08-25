@@ -9,6 +9,7 @@ import type { KcContext } from "./KcContext";
 import { Alert } from "./components/Alert";
 import { LocaleDropdown } from "./components/LocaleDropdown";
 import { CLIENT_BRAND_KEYS, resolveClientText } from "./clientText";
+import { ThemeToggle } from "./components/ThemeToggle";
 import logoUrl from "./assets/logo-compliance-branco.png";
 
 /** Páginas que se auto-submetem e nunca são realmente vistas: um painel de marketing
@@ -61,6 +62,11 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
        error.ftl, por exemplo, declara apenas { baseUrl }. Nessas o painel cai no
        padrão do tema, que é o comportamento correto: melhor o texto institucional que
        um painel vazio. O resolveClientText já trata client/attributes ausentes. */
+    /* Configuracao de realm em Realm Settings -> Themes -> Dark Mode. Nao esta no
+       tipo KcContext do keycloakify, mas o Keycloak 26 a entrega no contexto da pagina
+       (verificado). Desligada, nao ha escolha de tema a oferecer. */
+    const darkModeAllowed = (kcContext as { darkMode?: boolean }).darkMode !== false;
+
     const marca = (key: string, fallback: string) =>
         resolveClientText({
             client,
@@ -173,6 +179,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
     if (BARE_SHELL_PAGE_IDS.has(pageId)) {
         return (
             <div className={clsx("cvt-bare", kcClsx("kcLoginClass"))}>
+                {darkModeAllowed && <ThemeToggle i18n={i18n} className="cvt-theme-toggle" />}
                 <div className="cvt-split__inner">{content}</div>
             </div>
         );
@@ -211,6 +218,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                 <div className="cvt-brand__footer">{marca(CLIENT_BRAND_KEYS.copyright, msgStr("cvtCopyright"))}</div>
             </section>
             <section className="cvt-split__form">
+                {darkModeAllowed && <ThemeToggle i18n={i18n} className="cvt-theme-toggle" />}
                 <div className={clsx("cvt-split__inner", WIDE_CONTENT_PAGE_IDS.has(pageId) && "cvt-split__inner--wide")}>{content}</div>
             </section>
         </div>

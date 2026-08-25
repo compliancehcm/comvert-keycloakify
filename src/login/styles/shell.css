@@ -291,3 +291,45 @@
         animation: none;
     }
 }
+
+/* ============================ Botão de tema ============================
+   Discreto e fora do caminho: canto superior direito da coluna de conteúdo,
+   presente em todas as páginas -- inclusive no celular, onde o painel de marca
+   é escondido. */
+
+.cvt-theme-toggle {
+    position: absolute;
+    top: var(--space-8);
+    right: var(--space-8);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: var(--border-width) solid transparent;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+}
+
+.cvt-theme-toggle:hover {
+    border-color: var(--border);
+    background: var(--card);
+    color: var(--foreground);
+}
+
+/* A coluna precisa ser o contexto de posicionamento do botão. */
+.cvt-split__form,
+.cvt-bare {
+    position: relative;
+}
+
+@media (max-width: 480px) {
+    .cvt-theme-toggle {
+        top: var(--space-4);
+        right: var(--space-4);
+    }
+}

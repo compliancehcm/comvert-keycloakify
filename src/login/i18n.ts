@@ -35,6 +35,12 @@ const { useI18n, ofTypeI18n } = i18nBuilder
             cvtLoginFooterNote: "Acesso monitorado e registrado em log de auditoria.",
             cvtOr: "ou",
 
+            // --- Botao de tema ---
+            cvtThemeToggle: "Tema",
+            cvtThemeSystem: "do sistema",
+            cvtThemeLight: "claro",
+            cvtThemeDark: "escuro",
+
             // --- Lacuna do keycloakify ---
             // showPassword/hidePassword existem em messages_defaultSet/en.js e estão
             // AUSENTES de pt-BR.js. Sem estes dois, o aria-label do botão do olho sai
@@ -63,6 +69,11 @@ const { useI18n, ofTypeI18n } = i18nBuilder
             cvtLoginIdPlaceholder: "name@compliancesolucoes.com.br",
             cvtLoginFooterNote: "Access is monitored and recorded in the audit log.",
             cvtOr: "or",
+
+            cvtThemeToggle: "Theme",
+            cvtThemeSystem: "system",
+            cvtThemeLight: "light",
+            cvtThemeDark: "dark",
 
             showPassword: "Show password",
             hidePassword: "Hide password"

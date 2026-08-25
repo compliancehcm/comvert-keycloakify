@@ -5,10 +5,22 @@ import { useI18n } from "./i18n";
 import DefaultPage from "keycloakify/login/DefaultPage";
 import Template from "./Template";
 import Login from "./pages/Login";
+import { initializeThemePreference } from "./themePreference";
 import "./main.css";
 const UserProfileFormFields = lazy(
     () => import("keycloakify/login/UserProfileFormFields")
 );
+
+/* Aplica a escolha de tema no escopo de modulo, nao num effect: aqui roda depois de
+   o CSS deste chunk estar aplicado e ANTES do primeiro render, o que evita o usuario
+   ver um instante do tema errado. O darkMode vem da configuracao de realm em
+   Realm Settings -> Themes -> Dark Mode; ele nao esta no tipo KcContext do
+   keycloakify, mas o Keycloak 26 o entrega no contexto da pagina de login
+   (verificado). Ausente conta como permitido. */
+initializeThemePreference({
+    darkModeAllowed:
+        (window.kcContext as { darkMode?: boolean } | undefined)?.darkMode !== false
+});
 
 const doMakeUserConfirmPassword = true;
 

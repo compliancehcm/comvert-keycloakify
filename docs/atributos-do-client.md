@@ -174,3 +174,37 @@ No JSON do realm, dentro do client:
 - [`src/login/pages/Login.tsx`](../src/login/pages/Login.tsx) — a coluna do formulário
 - [`src/login/Template.tsx`](../src/login/Template.tsx) — o painel de marca
 - Stories no Storybook: `WithClientTextOverrides`, `WithClientNameAsTitle`, `WithBlankClientAttribute`
+
+---
+
+# Escolha de tema pelo usuário
+
+A tela tem um botão discreto no canto superior direito que cicla entre três estados:
+
+| Estado       | Ícone   | O que faz                                                                 |
+| ------------ | ------- | ------------------------------------------------------------------------- |
+| `do sistema` | monitor | Remove o atributo e segue o `prefers-color-scheme` do sistema operacional |
+| `claro`      | sol     | Força o tema claro                                                        |
+| `escuro`     | lua     | Força o tema escuro                                                       |
+
+A escolha é gravada em `localStorage` sob a chave `cvt.themePreference` e sobrevive a recarregamentos. Se o `localStorage` estiver indisponível (navegação privada, cookies bloqueados), a escolha vale só para aquela página — a leitura e a escrita são protegidas para não derrubar a tela de login.
+
+O botão aparece em **todas** as páginas de autenticação, inclusive no celular, onde o painel de marca é escondido.
+
+## A configuração de realm manda
+
+Em _Realm Settings → Themes → **Dark Mode**_, se o administrador desligar:
+
+- o tema é forçado em claro, **mesmo que o usuário já tivesse escolhido escuro** antes;
+- o botão não é exibido, porque não há escolha a oferecer.
+
+Verificado num Keycloak 26.7: com `darkMode=false` no realm e `escuro` gravado no navegador, a tela renderiza clara e sem o botão.
+
+> Comportamento diferente do padrão do Keycloakify: o tema de account dele segue apenas o `prefers-color-scheme`, sem escolha do usuário. O estado "do sistema" reproduz esse comportamento; os outros dois são acréscimo deste tema.
+
+## Onde isto está implementado
+
+- [`src/login/themePreference.ts`](../src/login/themePreference.ts) — leitura, gravação e aplicação
+- [`src/login/components/ThemeToggle.tsx`](../src/login/components/ThemeToggle.tsx) — o botão
+- [`src/login/KcPage.tsx`](../src/login/KcPage.tsx) — aplica a escolha antes do primeiro render, para não haver piscada de tema errado
+- [`src/login/styles/tokens.css`](../src/login/styles/tokens.css) — as paletas, selecionadas por `[data-theme]` **e** por `prefers-color-scheme`
