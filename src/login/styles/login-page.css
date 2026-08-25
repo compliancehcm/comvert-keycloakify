@@ -1,0 +1,127 @@
+/* Específico de login.ftl. */
+
+.cvt-eyebrow {
+    font-size: var(--text-13);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--accent-strong);
+}
+
+.cvt-login__lead {
+    margin: var(--space-5) 0 0;
+    font-size: var(--text-15);
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+}
+
+.cvt-login__form {
+    margin-top: 30px;
+}
+
+/* Linha com o rótulo da senha à esquerda e "Esqueci minha senha" à direita,
+   alinhados pela baseline. */
+.cvt-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-8);
+    margin-bottom: var(--space-4);
+}
+
+.cvt-label-row .kcLabelClass {
+    margin-bottom: 0;
+}
+
+.cvt-forgot {
+    flex: 0 0 auto;
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
+    color: var(--accent-strong);
+    text-decoration: none;
+}
+
+/* O mockup deixa o link sem sublinhado, contrariando o base.css do próprio design
+   system. O sublinhado volta no hover/foco para não deixar o link identificável
+   só pela cor. */
+.cvt-forgot:hover,
+.cvt-forgot:focus-visible {
+    color: var(--accent-strong);
+    text-decoration: underline;
+}
+
+.cvt-login__remember {
+    margin: var(--space-10) 0 var(--space-12);
+}
+
+.cvt-login__submit {
+    margin-top: 0;
+}
+
+/* Divisor "ou". Os dois traços são aria-hidden no markup. */
+.cvt-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    margin: var(--space-12) 0;
+}
+
+.cvt-divider__line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.cvt-divider__label {
+    font-size: var(--text-13);
+    color: var(--muted-foreground);
+}
+
+/* Rodapé: seletor de idioma, link de cadastro e a nota de acesso. */
+.cvt-login__footer {
+    margin-top: var(--space-14);
+    padding-top: var(--space-10);
+    border-top: var(--border-width) solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.cvt-login__footer .kcSignUpClass {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+/* O seletor de idioma no login mora no rodapé, não no topo. */
+.cvt-login__locale {
+    margin-bottom: 0;
+}
+
+/* A lista abre para CIMA aqui: o rodapé é o último bloco da coluna, e um menu
+   descendo sairia da viewport. */
+.cvt-login__locale .kcLocaleListClass {
+    top: auto;
+    bottom: calc(100% + var(--space-2));
+}
+
+.cvt-login__note {
+    font-size: var(--text-13);
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+}
+
+/* Provedores de identidade: o mockup desenha um botão "Entrar com SSO da empresa";
+   o Keycloak entrega um array. Cada provedor vira um botão secundário. */
+.cvt-login__social .kcFormSocialAccountSectionClass {
+    margin-top: 0;
+}
+
+.cvt-login__social .kcFormSocialAccountListButtonClass {
+    justify-content: center;
+}
+
+/* Botão de passkey (WebAuthn conditional UI). */
+.cvt-login__passkey {
+    margin-top: var(--space-12);
+}

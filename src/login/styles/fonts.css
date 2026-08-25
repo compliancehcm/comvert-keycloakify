@@ -1,0 +1,12 @@
+/* Inter auto-hospedada.
+   Substitui o @import de fonts.googleapis.com do design system: uma tela de login
+   do Keycloak roda com frequência em rede fechada, onde a requisição externa
+   pendura o render e ainda vaza cada acesso à tela de login para o Google.
+
+   wght.css = peso variável 100..900, estilo normal, sem itálico (o tema não usa).
+   Cada subset tem unicode-range, então o browser baixa só o que renderiza:
+   um acesso pt-BR puxa apenas inter-latin (~47 KB).
+
+   O Vite hasheia os .woff2 em dist/assets/ e o Keycloakify os embarca em
+   login/resources/dist/assets/ com a URL reescrita. */
+@import "@fontsource-variable/inter/wght.css";

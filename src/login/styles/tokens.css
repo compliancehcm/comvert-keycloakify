@@ -1,0 +1,209 @@
+/* Compliance HCM — tokens do design system.
+   Portado de tema_compliancehcm/_ds/.../tokens/{colors,spacing,radius-elevation,typography}.css
+   Regra do design system: nunca escreva um hex numa tela; use sempre o alias.
+
+   Omitido de propósito em relação à fonte original:
+   - o @font-face do 'Oracle Sans' e os temas netsuite-redwood/compliance-light/alma-dark
+     (ativos de marca da Oracle, que o readme do design system proíbe redistribuir);
+   - o @import de fonts.googleapis.com (tela de login precisa funcionar sem internet;
+     ver fonts.css). */
+
+:root {
+    /* ---- Rampa da marca (azul-marinho) ---- */
+    --brand-50: #f4f6fb;
+    --brand-100: #e8ecf7;
+    --brand-200: #ced7ee;
+    --brand-300: #aebbe3;
+    --brand-400: #8fa3d9;
+    --brand-500: #3a56a0;
+    --brand-600: #2b4587;
+    --brand-700: #233a72;
+    --brand-800: #1b2d59;
+    --brand-900: #101a33;
+    --brand-950: #0a1226;
+
+    /* ---- Acento âmbar ---- */
+    --accent: #f5a623;
+    --accent-strong: #b45309;
+    --accent-soft-bg: rgba(245, 166, 35, 0.12);
+    --accent-soft-border: rgba(245, 166, 35, 0.3);
+
+    /* ---- Rampa neutra (cinzas azulados) ---- */
+    --zinc-50: #f4f6fb;
+    --zinc-100: #eef1f8;
+    --zinc-200: #e0e5f0;
+    --zinc-400: #96a1bb;
+    --zinc-500: #5b6784;
+    --zinc-600: #3c4a6b;
+    --zinc-700: #2d3a56;
+    --zinc-800: #1e2942;
+    --zinc-900: #101a33;
+    --zinc-950: #0a1226;
+    --white: #ffffff;
+
+    /* ---- Superfícies e texto ---- */
+    --background: #f4f6fb;
+    --foreground: #101a33;
+    --card: #ffffff;
+    --card-subtle: #fbfcfe;
+    --border: #e0e5f0;
+    --border-subtle: #e6eaf4;
+    --border-input: #d5dbeb;
+    --muted: #eef1f8;
+    --muted-foreground: #5b6784;
+    --secondary-foreground: #3c4a6b;
+    --primary: #2b4587;
+    --primary-foreground: #ffffff;
+    --primary-hover: #3a56a0;
+    --primary-muted-foreground: #9db0e0;
+    --heading: #2b4587;
+
+    /* ---- Painel de marca (a metade navy do split-screen) ----
+       Tokens próprios, e não --primary/--primary-foreground, porque o logo é arte
+       BRANCA sobre transparente e não existe variante escura: o painel precisa
+       continuar escuro nos dois modos de cor. No escuro --primary vira azul-claro,
+       o que apagaria o logo. */
+    --brand-panel-bg: #2b4587;
+    --brand-panel-fg: #ffffff;
+
+    /* Texto secundário sobre o painel. O design system usa #9db0e0 (4,21:1) no
+       parágrafo e #8fa3d9 (3,67:1) no rodapé; os dois falham WCAG AA sobre o navy.
+       #c7d2ef mede 6,03:1. Desvio deliberado, registrado no plano. A hierarquia
+       entre parágrafo e rodapé fica por tamanho, não por uma segunda cor que falha. */
+    --brand-panel-muted: #c7d2ef;
+    --brand-panel-border: rgba(255, 255, 255, 0.12);
+
+    /* ---- Feedback inline ---- */
+    --danger: #f43f5e;
+    --danger-soft-bg: #fff1f3;
+    --danger-soft-border: #fecdd3;
+    --danger-soft-fg: #be123c;
+    --danger-soft-fg-strong: #9f1239;
+    --success: #10b981;
+    --status-success-bg: #d1fae5;
+    --status-success-fg: #065f46;
+    --status-warning-bg: #fef3c7;
+    --status-warning-fg: #92400e;
+    --status-info-bg: #e8ecf7;
+    --status-info-fg: #233a72;
+
+    /* ---- Espaçamento (base 2px: --space-N == N*2 px) ---- */
+    --space-1: 2px;
+    --space-2: 4px;
+    --space-3: 6px;
+    --space-4: 8px;
+    --space-5: 10px;
+    --space-6: 12px;
+    --space-7: 14px;
+    --space-8: 16px;
+    --space-9: 18px;
+    --space-10: 20px;
+    --space-11: 22px;
+    --space-12: 24px;
+    --space-14: 28px;
+
+    /* ---- Raio ---- */
+    --radius-sm: 6px;
+    --radius-md: 7px;
+    --radius-lg: 8px; /* botões, inputs, linhas */
+    --radius-menu: 10px;
+    --radius-tile: 11px;
+    --radius-xl: 12px; /* cards, modais */
+    --radius-pill: 999px;
+
+    /* ---- Elevação (só popover e toast; card não tem sombra, nunca) ---- */
+    --shadow-popover: 0 8px 30px rgba(0, 0, 0, 0.15);
+
+    /* ---- Bordas ---- */
+    --border-width: 1px;
+    --border-hairline: 1px solid var(--border);
+
+    /* ---- Movimento ---- */
+    --duration-fast: 0.2s;
+    --duration-base: 0.25s;
+    --easing: ease;
+
+    /* ---- Tipografia ---- */
+    --font: "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
+
+    --text-10: 10px;
+    --text-11: 11px;
+    --text-12: 12px;
+    --text-13: 13px;
+    --text-14: 14px;
+    --text-15: 15px;
+    --text-16: 16px;
+    --text-18: 18px;
+    --text-22: 22px;
+    --text-24: 24px;
+    --text-26: 26px;
+    --text-28: 28px;
+    --text-34: 34px;
+
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    --tracking-h1: -0.02em;
+    --tracking-brand: -0.01em;
+    --tracking-eyebrow: 0.05em;
+    --tracking-caps: 0.06em;
+
+    --leading-tight: 1.2;
+    --leading-snug: 1.4;
+    --leading-body: 1.45;
+    --leading-relaxed: 1.5;
+}
+
+/* Modo escuro. O [data-theme="escuro"] do design system não redeclara --accent*,
+   então --accent-strong (#b45309) cairia a 3,65:1 sobre #0a1226. Aqui ele é
+   corrigido para #fbbf24 (10,4:1). O Keycloak não tem preferência de tema por
+   usuário, então isto segue prefers-color-scheme. */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0a1226;
+        --foreground: #eef1f8;
+        --card: #131e3b;
+        --card-subtle: #172344;
+        --border: #22305a;
+        --border-subtle: #1e2b50;
+        --border-input: #2b3a68;
+        --muted: #1a2647;
+        --muted-foreground: #98a5c6;
+        --secondary-foreground: #c7d2ef;
+        --heading: #aebbe3;
+
+        --primary: #7d95d8;
+        --primary-foreground: #0a1226;
+        --primary-hover: #9db0e0;
+
+        /* O painel segue escuro; só desce um tom para casar com o fundo. */
+        --brand-panel-bg: #101a33;
+        --brand-panel-fg: #ffffff;
+
+        --accent-strong: #fbbf24;
+
+        --danger-soft-bg: #2d1119;
+        --danger-soft-border: #5c2130;
+        --danger-soft-fg: #fda4af;
+        --danger-soft-fg-strong: #fecdd3;
+        --status-success-bg: #0d3a2b;
+        --status-success-fg: #6ee7b7;
+        --status-warning-bg: #3d2c10;
+        --status-warning-fg: #fcd34d;
+        --status-info-bg: #1b2d59;
+        --status-info-fg: #aebbe3;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}

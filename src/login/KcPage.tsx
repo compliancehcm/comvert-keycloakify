@@ -4,12 +4,19 @@ import type { KcContext } from "./KcContext";
 import { useI18n } from "./i18n";
 import DefaultPage from "keycloakify/login/DefaultPage";
 import Template from "./Template";
+import Login from "./pages/Login";
 import "./main.css";
 const UserProfileFormFields = lazy(
     () => import("keycloakify/login/UserProfileFormFields")
 );
 
 const doMakeUserConfirmPassword = true;
+
+/* O tema traz sua própria camada de CSS (src/login/styles/*). Carregar PatternFly
+   junto brigaria com as três regras absolutas do design: card sem sombra, foco só
+   na borda e ausência de estado de press. As ~125 ClassKeys continuam disponíveis
+   como gancho de estilo mesmo com false — ver o comentário em kc-base.css. */
+const doUseDefaultCss = false;
 
 export default function KcPage(props: { kcContext: KcContext }) {
     const { kcContext } = props;
@@ -20,6 +27,18 @@ export default function KcPage(props: { kcContext: KcContext }) {
         <Suspense>
             {(() => {
                 switch (kcContext.pageId) {
+                    case "login.ftl":
+                        // Import estático, não lazy: é a página quente do tema, e um
+                        // chunk separado custaria um round trip na única URL que importa.
+                        return (
+                            <Login
+                                kcContext={kcContext}
+                                i18n={i18n}
+                                classes={classes}
+                                Template={Template}
+                                doUseDefaultCss={doUseDefaultCss}
+                            />
+                        );
                     default:
                         return (
                             <DefaultPage
@@ -27,7 +46,7 @@ export default function KcPage(props: { kcContext: KcContext }) {
                                 i18n={i18n}
                                 classes={classes}
                                 Template={Template}
-                                doUseDefaultCss={true}
+                                doUseDefaultCss={doUseDefaultCss}
                                 UserProfileFormFields={UserProfileFormFields}
                                 doMakeUserConfirmPassword={doMakeUserConfirmPassword}
                             />

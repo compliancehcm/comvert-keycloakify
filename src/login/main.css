@@ -1,83 +1,21 @@
-body.kcBodyClass {
-  background-color: white;
-  background-image: none;
-  width: 100%;
-  height: 100vh; /* ajuste conforme necessário */
-  background-image: url('./assets/bgBottomLeft.b2c826bd.webp'), url('./assets/bgTopRight.ff274729.webp');
-  background-position: left bottom, right top;
-  background-repeat: no-repeat, no-repeat;
-  background-size: auto, auto; /* ou use valores específicos, como '100px 100px' */
-}
+/* Índice de estilos do tema. A ordem é a ordem da cascata.
+   O Vite inlina os @import locais em build, então sai uma folha só — sem
+   waterfall de requisições em runtime. */
 
-div.kcFormCardClass.card-pf {
-  border-radius: 6px;
-}
+/* 1. Tokens: as custom properties que todo o resto consome. */
+@import "./styles/tokens.css";
 
-.kcInputClass {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  background: #f5f5f5;
-  border: 1px solid rgb(229, 231, 235);
-  border-radius: 6px;
-  height: 50px !important;
-  line-height: 50px;
-  box-sizing: border-box;
-  /* box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); */
-}
+/* 2. Fonte auto-hospedada (Inter). Sem chamada externa. */
+@import "./styles/fonts.css";
 
-.kcLabelClass {
-  font-weight: bold;
-  color: #333;
-}
+/* 3. Camada de elemento: body, links, controles, foco. */
+@import "./styles/base.css";
 
-button.kcFormPasswordVisibilityButtonClass{
-  background: #f5f5f5;
-  border-radius: 6px;
-}
+/* 4. As ClassKeys do Keycloakify, substituindo PatternFly/Bootstrap. */
+@import "./styles/kc-base.css";
 
-.kcButtonClass {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #ffffff;
-    background: rgb(0,126,189);
-    border: none;
-    border-radius: 6px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-    width: 100%;
-    margin-bottom: 5px;
-}
+/* 5. O shell split-screen, compartilhado por todas as páginas. */
+@import "./styles/shell.css";
 
-.kcButtonClass:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-}
-
-.kcButtonClass:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.kcButtonClass:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.5);
-}
-
-.kcButtonClass:disabled {
-    background: linear-gradient(45deg, #aaa, #ccc);
-    color: #666;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-    opacity: 0.6;
-}
-
-.kcButtonClass:disabled:hover,
-.kcButtonClass:disabled:active {
-    transform: none;
-    box-shadow: none;
-}
+/* 6. Específico de login.ftl. */
+@import "./styles/login-page.css";

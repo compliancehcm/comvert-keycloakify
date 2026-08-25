@@ -1,0 +1,85 @@
+/* Camada de elemento. Portado de tema_compliancehcm/_ds/.../tokens/base.css,
+   readaptado para as classes que o Keycloakify põe em <html> e <body>. */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html.kcHtmlClass {
+    height: 100%;
+}
+
+body.kcBodyClass {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh; /* iOS Safari: 100vh transborda atrás da barra */
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font);
+    font-size: var(--text-14);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+a:hover {
+    color: var(--secondary-foreground);
+}
+
+input,
+select,
+textarea,
+button {
+    font-family: var(--font);
+}
+
+button {
+    color: inherit;
+}
+
+input,
+select,
+textarea {
+    background: var(--card);
+    color: var(--foreground);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--muted-foreground);
+}
+
+input[type="date"] {
+    color-scheme: light dark;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+}
+
+/* O design system especifica "foco muda a borda do input, sem anel" e "sem estado
+   de press". Levado à letra isso deixa o botão do olho, o checkbox e os links SEM
+   nenhum indicador de foco — falha de WCAG 2.4.7, e um usuário só-teclado não
+   consegue operar a tela. :focus-visible resolve os dois lados: o usuário de mouse
+   nunca vê o anel, então a intenção visual do design se mantém intacta.
+   Desvio deliberado, registrado no plano. */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* O input já sinaliza foco pela borda (--primary); o anel entra só como reforço
+   e sem offset, para não brigar com o botão do olho encostado na borda. */
+.kcInputClass:focus-visible {
+    outline-offset: 0;
+}

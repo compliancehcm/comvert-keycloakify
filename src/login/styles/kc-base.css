@@ -1,0 +1,674 @@
+/* Camada que substitui o PatternFly/Bootstrap.
+   O tema roda com doUseDefaultCss={false}. Isso NÃO remove as classes: verificado em
+   node_modules/keycloakify/lib/getKcClsx.js, o kcClsx sempre emite o ClassKey literal
+   --> clsx(classKey, classes?.[classKey] ?? (doUseDefaultCss ? defaultClasses[classKey] : undefined))
+   Ou seja, kcClsx("kcInputClass") devolve "kcInputClass" e as ~125 ClassKeys seguem
+   sendo ganchos de estilo estáveis (ClassKey é tipo exportado = contrato versionado).
+
+   Esta folha vale para TODAS as 36 páginas. Nada aqui é específico do login. */
+
+/* ============================ Formulário: estrutura ============================ */
+
+.kcFormClass {
+    margin: 0;
+}
+
+.kcFormGroupClass {
+    margin-bottom: var(--space-10);
+}
+
+.kcFormGroupClass:last-of-type {
+    margin-bottom: 0;
+}
+
+.kcLabelWrapperClass {
+    display: block;
+}
+
+.kcLabelClass {
+    display: block;
+    margin-bottom: var(--space-4);
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
+    color: var(--secondary-foreground);
+}
+
+.kcInputWrapperClass {
+    display: block;
+}
+
+.kcFormSettingClass {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-8);
+    margin-top: var(--space-10);
+}
+
+.kcFormOptionsClass,
+.kcFormOptionsWrapperClass {
+    min-width: 0;
+}
+
+.kcFormButtonsClass,
+.kcFormButtonsWrapperClass {
+    margin-top: var(--space-12);
+}
+
+/* ============================ Inputs ============================ */
+
+.kcInputClass,
+.kcTextareaClass {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--space-5) var(--space-6);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    color: var(--foreground);
+    font-size: var(--text-14);
+    font-family: var(--font);
+    outline: none;
+}
+
+/* Regra do design system: o foco muda a borda para --primary, sem anel.
+   O anel de :focus-visible de base.css entra por cima como reforço de a11y. */
+.kcInputClass:focus,
+.kcTextareaClass:focus {
+    border-color: var(--primary);
+}
+
+.kcInputClass[aria-invalid="true"],
+.kcTextareaClass[aria-invalid="true"] {
+    border-color: var(--danger-soft-border);
+}
+
+.kcInputClass:disabled,
+.kcTextareaClass:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.kcTextareaClass {
+    min-height: 120px;
+    resize: vertical;
+    line-height: var(--leading-body);
+}
+
+.kcInputLargeClass {
+    font-size: var(--text-16);
+}
+
+/* Grupo com botão à direita (olho da senha). Substitui o pf-c-input-group. */
+.kcInputGroup {
+    position: relative;
+    display: block;
+}
+
+.kcInputGroup .kcInputClass {
+    padding-right: 40px;
+}
+
+.kcFormPasswordVisibilityButtonClass {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    border: none;
+    background: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+}
+
+.kcFormPasswordVisibilityButtonClass:hover {
+    color: var(--foreground);
+}
+
+/* ============================ Mensagens de campo ============================ */
+
+.kcInputErrorMessageClass {
+    display: block;
+    margin-top: var(--space-4);
+    font-size: var(--text-13);
+    color: var(--danger-soft-fg);
+}
+
+.kcInputHelperTextBeforeClass,
+.kcInputHelperTextAfterClass {
+    display: block;
+    font-size: var(--text-13);
+    color: var(--muted-foreground);
+}
+
+.kcInputHelperTextBeforeClass {
+    margin-bottom: var(--space-4);
+}
+
+.kcInputHelperTextAfterClass {
+    margin-top: var(--space-4);
+}
+
+/* ============================ Botões ============================ */
+
+.kcButtonClass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-8);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-family: var(--font);
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.kcButtonLargeClass {
+    padding: var(--space-5) var(--space-9);
+    font-size: var(--text-14);
+}
+
+.kcButtonBlockClass {
+    width: 100%;
+}
+
+.kcButtonPrimaryClass {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.kcButtonPrimaryClass:hover {
+    background: var(--primary-hover);
+    color: var(--primary-foreground);
+}
+
+.kcButtonDefaultClass,
+.kcButtonSecondaryClass {
+    background: var(--card);
+    color: var(--foreground);
+    border: var(--border-width) solid var(--border);
+}
+
+.kcButtonDefaultClass:hover,
+.kcButtonSecondaryClass:hover {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+.kcButtonClass:disabled,
+.kcButtonClass[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* O design system não define estado de press: nenhuma regra :active de propósito. */
+
+/* ============================ Checkbox e radio ============================ */
+
+.kcCheckClass,
+.kcInputClassCheckbox,
+.kcInputClassRadio,
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--text-14);
+    color: var(--secondary-foreground);
+}
+
+.kcCheckLabelClass,
+.kcInputClassCheckboxLabel,
+.kcInputClassRadioLabel,
+.checkbox label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin: 0;
+    font-size: var(--text-14);
+    font-weight: var(--weight-regular);
+    color: var(--secondary-foreground);
+    cursor: pointer;
+}
+
+.kcCheckInputClass,
+.kcCheckboxInputClass,
+.kcInputClassCheckboxInput,
+.kcInputClassRadioInput,
+.checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.kcInputClassRadioCheckboxLabelDisabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================ Alertas ============================ */
+
+.kcAlertClass {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-5);
+    padding: var(--space-5) var(--space-6);
+    margin-bottom: var(--space-8);
+    border: var(--border-width) solid var(--danger-soft-border);
+    border-radius: var(--radius-lg);
+    background: var(--danger-soft-bg);
+    color: var(--danger-soft-fg);
+    font-size: var(--text-13);
+}
+
+.kcAlertClass.alert-success {
+    border-color: var(--status-success-fg);
+    background: var(--status-success-bg);
+    color: var(--status-success-fg);
+}
+
+.kcAlertClass.alert-warning {
+    border-color: var(--status-warning-fg);
+    background: var(--status-warning-bg);
+    color: var(--status-warning-fg);
+}
+
+.kcAlertClass.alert-info {
+    border-color: var(--status-info-fg);
+    background: var(--status-info-bg);
+    color: var(--status-info-fg);
+}
+
+.kcAlertTitleClass {
+    min-width: 0;
+    line-height: var(--leading-body);
+}
+
+.kcAlertClass svg {
+    flex: 0 0 auto;
+    margin-top: 1px;
+}
+
+/* ============================ Seletor de idioma ============================ */
+
+.kcLocaleMainClass {
+    margin-bottom: var(--space-12);
+}
+
+.kcLocaleDropDownClass {
+    position: relative;
+    display: inline-block;
+}
+
+#kc-current-locale-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-6);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--muted-foreground);
+    font-size: var(--text-13);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+}
+
+#kc-current-locale-link:hover {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+/* IMPORTANTE: sem !important. O menu-button-links.js do Keycloak abre a lista com
+   style.display="block" inline e fecha com removeProperty("display"), ou seja, o
+   estado FECHADO vem da folha de estilo. Com !important a lista nunca abriria. */
+.kcLocaleListClass {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + var(--space-2));
+    left: 0;
+    min-width: 180px;
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 0;
+    padding: var(--space-2);
+    list-style: none;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-menu);
+    background: var(--card);
+    box-shadow: var(--shadow-popover);
+}
+
+#kc-locale-dropdown:hover .kcLocaleListClass {
+    display: block;
+}
+
+.kcLocaleListItemClass {
+    display: block;
+}
+
+.kcLocaleItemClass {
+    display: block;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-sm);
+    color: var(--foreground);
+    font-size: var(--text-13);
+    text-decoration: none;
+}
+
+.kcLocaleItemClass:hover {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+/* ============================ Provedores de identidade ============================ */
+
+.kcFormSocialAccountSectionClass {
+    margin-top: var(--space-12);
+}
+
+.kcFormSocialAccountListClass {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kcFormSocialAccountListGridClass {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.kcFormSocialAccountListButtonClass {
+    width: 100%;
+}
+
+.kcFormSocialAccountNameClass {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sem FontAwesome/pficon carregado, os ícones de IdP seriam quadrados vazios. */
+.kcCommonLogoIdP,
+[class^="kcLogoIdP-"] {
+    display: none;
+}
+
+/* ============================ select-authenticator.ftl ============================ */
+
+.kcSelectAuthListClass {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kcSelectAuthListItemClass {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    color: var(--foreground);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.kcSelectAuthListItemClass:hover {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+.kcSelectAuthListItemIconClass,
+.kcSelectAuthListItemIconPropertyClass {
+    flex: 0 0 auto;
+    color: var(--primary);
+}
+
+.kcSelectAuthListItemBodyClass,
+.kcSelectAuthListItemFillClass {
+    flex: 1;
+    min-width: 0;
+}
+
+.kcSelectAuthListItemHeadingClass,
+.kcSelectAuthListItemTitle {
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+}
+
+.kcSelectAuthListItemDescriptionClass {
+    margin-top: var(--space-1);
+    font-size: var(--text-13);
+    color: var(--muted-foreground);
+}
+
+.kcSelectAuthListItemArrowClass,
+.kcSelectAuthListItemArrowIconClass {
+    flex: 0 0 auto;
+    color: var(--muted-foreground);
+}
+
+/* ============================ login-otp / config-totp ============================ */
+
+.kcLoginOTPListClass {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kcLoginOTPListInputClass {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.kcLoginOTPListClass li {
+    display: block;
+}
+
+.kcLoginOTPListItemHeaderClass {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    cursor: pointer;
+}
+
+.kcLoginOTPListClass input:checked + .kcLoginOTPListItemHeaderClass,
+.kcLoginOTPListItemHeaderClass:hover {
+    border-color: var(--primary);
+    background: var(--muted);
+}
+
+.kcLoginOTPListItemIconBodyClass,
+.kcLoginOTPListItemIconClass {
+    flex: 0 0 auto;
+    color: var(--primary);
+}
+
+.kcLoginOTPListItemTitleClass {
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+}
+
+/* ============================ Códigos de recuperação ============================ */
+
+.kcRecoveryCodesList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3) var(--space-8);
+    margin: 0 0 var(--space-10);
+    padding: var(--space-8);
+    list-style: none;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card-subtle);
+    font-size: var(--text-14);
+    font-variant-numeric: tabular-nums;
+}
+
+.kcRecoveryCodesList li {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.kcRecoveryCodesActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+}
+
+.kcRecoveryCodesConfirmation {
+    margin-bottom: var(--space-10);
+}
+
+.kcRecoveryCodesWarning {
+    padding: var(--space-5) var(--space-6);
+    margin-bottom: var(--space-10);
+    border: var(--border-width) solid var(--status-warning-fg);
+    border-radius: var(--radius-lg);
+    background: var(--status-warning-bg);
+    color: var(--status-warning-fg);
+    font-size: var(--text-13);
+}
+
+.kcRecoveryCodesWarning ul {
+    margin: var(--space-4) 0 0;
+    padding-left: var(--space-10);
+}
+
+/* ============================ Rodapé de informação ============================ */
+
+.kcSignUpClass {
+    margin-top: var(--space-14);
+    padding-top: var(--space-10);
+    border-top: var(--border-width) solid var(--border);
+}
+
+.kcInfoAreaWrapperClass,
+.kcInfoAreaClass {
+    font-size: var(--text-14);
+    color: var(--muted-foreground);
+}
+
+.kcInfoAreaWrapperClass a,
+.kcInfoAreaClass a {
+    font-weight: var(--weight-semibold);
+}
+
+/* ============================ Utilidades ============================ */
+
+.kcSrOnlyClass {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+#kc-content,
+#kc-content-wrapper,
+.kcContentWrapperClass,
+.kcContentClass {
+    min-width: 0;
+}
+
+/* try-another-way */
+#kc-select-try-another-way-form {
+    margin-top: var(--space-10);
+}
+
+#kc-select-try-another-way-form a {
+    font-size: var(--text-14);
+    font-weight: var(--weight-semibold);
+}
+
+/* Ícone de reiniciar o fluxo (era pficon). */
+.kcResetFlowIcon::before {
+    content: "↻";
+    display: inline-block;
+    font-size: var(--text-16);
+    line-height: 1;
+}
+
+/* Ícones de webauthn/authenticator eram FontAwesome; sem a fonte viram lixo visual. */
+.kcAuthenticatorDefaultClass,
+.kcAuthenticatorPasswordClass,
+.kcAuthenticatorOTPClass,
+.kcAuthenticatorWebAuthnClass,
+.kcAuthenticatorWebAuthnPasswordlessClass,
+.kcWebAuthnDefaultIcon,
+.kcWebAuthnKeyIcon,
+.kcWebAuthnUSB,
+.kcWebAuthnNFC,
+.kcWebAuthnBLE,
+.kcWebAuthnInternal,
+.kcWebAuthnUnknownIcon {
+    display: none;
+}
+
+/* Listas de credenciais (delete-credential, webauthn-*) */
+.kcFormGroupHeader {
+    margin-bottom: var(--space-6);
+    font-size: var(--text-15);
+    font-weight: var(--weight-semibold);
+    color: var(--heading);
+}
+
+/* O Keycloak marca campos obrigatórios com <span class="required">*</span> */
+.required {
+    color: var(--danger-soft-fg);
+}
+
+/* Tabelas (webauthn-authenticate lista credenciais) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-14);
+}
+
+table th,
+table td {
+    padding: var(--space-4) var(--space-5);
+    text-align: left;
+    border-bottom: var(--border-width) solid var(--border);
+}
+
+table th {
+    font-size: var(--text-12);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+}

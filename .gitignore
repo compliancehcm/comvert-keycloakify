@@ -55,3 +55,8 @@ jspm_packages
 /dist_keycloak
 /build
 /storybook-static
+
+# Pasta-fonte do design (canvas do Claude Design). Fora do versionamento porque
+# contém ativos de marca da Oracle (OracleBrandVF*.woff2, redwood-*.svg) que o
+# readme do próprio design system proíbe redistribuir — e este repo é público.
+/tema_compliancehcm/

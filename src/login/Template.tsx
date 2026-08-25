@@ -1,13 +1,34 @@
 import { useEffect } from "react";
 import { clsx } from "keycloakify/tools/clsx";
-import { kcSanitize } from "keycloakify/lib/kcSanitize";
 import type { TemplateProps } from "keycloakify/login/TemplateProps";
 import { getKcClsx } from "keycloakify/login/lib/kcClsx";
 import { useSetClassName } from "keycloakify/tools/useSetClassName";
 import { useInitialize } from "keycloakify/login/Template.useInitialize";
 import type { I18n } from "./i18n";
 import type { KcContext } from "./KcContext";
-import logoPngUrl from "./assets/logo.png";
+import { Alert } from "./components/Alert";
+import { LocaleDropdown } from "./components/LocaleDropdown";
+import logoUrl from "./assets/logo-compliance-branco.png";
+
+/** Páginas que se auto-submetem e nunca são realmente vistas: um painel de marketing
+ *  ali não faz sentido. Recebem um shell mínimo. */
+const BARE_SHELL_PAGE_IDS = new Set<string>(["saml-post-form.ftl"]);
+
+/** Páginas de conteúdo largo (formulário de perfil, QR code, grade de códigos de
+ *  recuperação, textarea): mantêm o split-screen, mas com a coluna mais larga, para
+ *  o leiaute não esmagar o conteúdo. */
+const WIDE_CONTENT_PAGE_IDS = new Set<string>([
+    "register.ftl",
+    "login-update-profile.ftl",
+    "idp-review-user-profile.ftl",
+    "login-config-totp.ftl",
+    "login-recovery-authn-code-config.ftl",
+    "login-oauth-grant.ftl",
+    "code.ftl",
+    "delete-credential.ftl",
+    "webauthn-register.ftl",
+    "webauthn-authenticate.ftl"
+]);
 
 export default function Template(props: TemplateProps<KcContext, I18n>) {
     const {
@@ -28,9 +49,9 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
     const { kcClsx } = getKcClsx({ doUseDefaultCss, classes });
 
-    const { msg, msgStr, currentLanguage, enabledLanguages } = i18n;
+    const { msg, msgStr, enabledLanguages } = i18n;
 
-    const { realm, auth, url, message, isAppInitiatedAction } = kcContext;
+    const { realm, auth, url, message, isAppInitiatedAction, pageId } = kcContext;
 
     useEffect(() => {
         document.title = documentTitle ?? msgStr("loginTitle", realm.displayName);
@@ -52,53 +73,20 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
         return null;
     }
 
-    return (
-        <div className={kcClsx("kcLoginClass")}>
-            <div id="kc-header" className={kcClsx("kcHeaderClass")}>
-                <div id="kc-header-wrapper" className={kcClsx("kcHeaderWrapperClass")}>
-                    {/* {msg("loginTitleHtml", realm.displayNameHtml)} */}
-                    <img src={logoPngUrl} width={400}/>
-                </div>
-            </div>
-            <div className={kcClsx("kcFormCardClass")}>
-                <header className={kcClsx("kcFormHeaderClass")}>
-                    {enabledLanguages.length > 1 && (
-                        <div className={kcClsx("kcLocaleMainClass")} id="kc-locale">
-                            <div id="kc-locale-wrapper" className={kcClsx("kcLocaleWrapperClass")}>
-                                <div id="kc-locale-dropdown" className={clsx("menu-button-links", kcClsx("kcLocaleDropDownClass"))}>
-                                    <button
-                                        tabIndex={1}
-                                        id="kc-current-locale-link"
-                                        aria-label={msgStr("languages")}
-                                        aria-haspopup="true"
-                                        aria-expanded="false"
-                                        aria-controls="language-switch1"
-                                    >
-                                        {currentLanguage.label}
-                                    </button>
-                                    <ul
-                                        role="menu"
-                                        tabIndex={-1}
-                                        aria-labelledby="kc-current-locale-link"
-                                        aria-activedescendant=""
-                                        id="language-switch1"
-                                        className={kcClsx("kcLocaleListClass")}
-                                    >
-                                        {enabledLanguages.map(({ languageTag, label, href }, i) => (
-                                            <li key={languageTag} className={kcClsx("kcLocaleListItemClass")} role="none">
-                                                <a role="menuitem" id={`language-${i + 1}`} className={kcClsx("kcLocaleItemClass")} href={href}>
-                                                    {label}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+    const isLoginPage = pageId === "login.ftl";
+
+    /* O login desenha o próprio cabeçalho e o próprio alerta, na posição que o
+       design pede (o erro fica logo acima do botão, não no topo). */
+    const content = (
+        <>
+            {!isLoginPage && (
+                <header>
+                    {enabledLanguages.length > 1 && <LocaleDropdown {...{ i18n, kcClsx }} />}
                     {(() => {
                         const node = !(auth !== undefined && auth.showUsername && !auth.showResetCredentials) ? (
-                            <h1 id="kc-page-title">{headerNode}</h1>
+                            <h1 id="kc-page-title" className="cvt-page__title">
+                                {headerNode}
+                            </h1>
                         ) : (
                             <div id="kc-username" className={kcClsx("kcFormGroupClass")}>
                                 <label id="kc-attempted-username">{auth.attemptedUsername}</label>
@@ -120,7 +108,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                                             {msg("requiredFields")}
                                         </span>
                                     </div>
-                                    <div className="col-md-10">{node}</div>
+                                    <div>{node}</div>
                                 </div>
                             );
                         }
@@ -128,60 +116,87 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                         return node;
                     })()}
                 </header>
-                <div id="kc-content">
-                    <div id="kc-content-wrapper">
-                        {/* App-initiated actions should not see warning messages about the need to complete the action during login. */}
-                        {displayMessage && message !== undefined && (message.type !== "warning" || !isAppInitiatedAction) && (
-                            <div
-                                className={clsx(
-                                    `alert-${message.type}`,
-                                    kcClsx("kcAlertClass"),
-                                    `pf-m-${message?.type === "error" ? "danger" : message.type}`
-                                )}
-                            >
-                                <div className="pf-c-alert__icon">
-                                    {message.type === "success" && <span className={kcClsx("kcFeedbackSuccessIcon")}></span>}
-                                    {message.type === "warning" && <span className={kcClsx("kcFeedbackWarningIcon")}></span>}
-                                    {message.type === "error" && <span className={kcClsx("kcFeedbackErrorIcon")}></span>}
-                                    {message.type === "info" && <span className={kcClsx("kcFeedbackInfoIcon")}></span>}
-                                </div>
-                                <span
-                                    className={kcClsx("kcAlertTitleClass")}
-                                    dangerouslySetInnerHTML={{
-                                        __html: kcSanitize(message.summary)
+            )}
+            <div id="kc-content" className={isLoginPage ? undefined : "cvt-page__body"}>
+                <div id="kc-content-wrapper">
+                    {/* Ações iniciadas pela aplicação não devem mostrar o aviso de "conclua a ação". */}
+                    {displayMessage && message !== undefined && (message.type !== "warning" || !isAppInitiatedAction) && (
+                        <Alert {...{ message, kcClsx }} />
+                    )}
+                    {children}
+                    {auth !== undefined && auth.showTryAnotherWayLink && (
+                        <form id="kc-select-try-another-way-form" action={url.loginAction} method="post">
+                            <div className={kcClsx("kcFormGroupClass")}>
+                                <input type="hidden" name="tryAnotherWay" value="on" />
+                                <a
+                                    href="#"
+                                    id="try-another-way"
+                                    onClick={() => {
+                                        document.forms["kc-select-try-another-way-form" as never].submit();
+                                        return false;
                                     }}
-                                />
+                                >
+                                    {msg("doTryAnotherWay")}
+                                </a>
                             </div>
-                        )}
-                        {children}
-                        {auth !== undefined && auth.showTryAnotherWayLink && (
-                            <form id="kc-select-try-another-way-form" action={url.loginAction} method="post">
-                                <div className={kcClsx("kcFormGroupClass")}>
-                                    <input type="hidden" name="tryAnotherWay" value="on" />
-                                    <a
-                                        href="#"
-                                        id="try-another-way"
-                                        onClick={() => {
-                                            document.forms["kc-select-try-another-way-form" as never].submit();
-                                            return false;
-                                        }}
-                                    >
-                                        {msg("doTryAnotherWay")}
-                                    </a>
-                                </div>
-                            </form>
-                        )}
-                        {socialProvidersNode}
-                        {displayInfo && (
-                            <div id="kc-info" className={kcClsx("kcSignUpClass")}>
-                                <div id="kc-info-wrapper" className={kcClsx("kcInfoAreaWrapperClass")}>
-                                    {infoNode}
-                                </div>
+                        </form>
+                    )}
+                    {socialProvidersNode}
+                    {displayInfo && (
+                        <div id="kc-info" className={kcClsx("kcSignUpClass")}>
+                            <div id="kc-info-wrapper" className={kcClsx("kcInfoAreaWrapperClass")}>
+                                {infoNode}
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
+        </>
+    );
+
+    if (BARE_SHELL_PAGE_IDS.has(pageId)) {
+        return (
+            <div className={clsx("cvt-bare", kcClsx("kcLoginClass"))}>
+                <div className="cvt-split__inner">{content}</div>
+            </div>
+        );
+    }
+
+    return (
+        <div className={clsx("cvt-split", kcClsx("kcLoginClass"))}>
+            <section className="cvt-split__brand">
+                <div className="cvt-blob cvt-blob--top" aria-hidden="true"></div>
+                <div className="cvt-blob cvt-blob--bottom" aria-hidden="true"></div>
+                <div id="kc-header" className={clsx("cvt-brand__header", kcClsx("kcHeaderClass"))}>
+                    <div id="kc-header-wrapper" className={kcClsx("kcHeaderWrapperClass")}>
+                        <img className="cvt-brand__logo" src={logoUrl} alt={msgStr("cvtBrandAlt")} />
+                    </div>
+                    <div className="cvt-brand__subtitle">{msg("cvtBrandSubtitle")}</div>
+                </div>
+                <div className="cvt-brand__body">
+                    <div className="cvt-rule" aria-hidden="true"></div>
+                    <h2 className="cvt-brand__headline">{msg("cvtBrandHeadline")}</h2>
+                    <p className="cvt-brand__lead">{msg("cvtBrandLead")}</p>
+                    <div className="cvt-stats">
+                        <div className="cvt-stat">
+                            <div className="cvt-stat__value">{msg("cvtStat1Value")}</div>
+                            <div className="cvt-stat__label">{msg("cvtStat1Label")}</div>
+                        </div>
+                        <div className="cvt-stat">
+                            <div className="cvt-stat__value">{msg("cvtStat2Value")}</div>
+                            <div className="cvt-stat__label">{msg("cvtStat2Label")}</div>
+                        </div>
+                        <div className="cvt-stat">
+                            <div className="cvt-stat__value">{msg("cvtStat3Value")}</div>
+                            <div className="cvt-stat__label">{msg("cvtStat3Label")}</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="cvt-brand__footer">{msg("cvtCopyright")}</div>
+            </section>
+            <section className="cvt-split__form">
+                <div className={clsx("cvt-split__inner", WIDE_CONTENT_PAGE_IDS.has(pageId) && "cvt-split__inner--wide")}>{content}</div>
+            </section>
         </div>
     );
 }
