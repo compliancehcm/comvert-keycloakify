@@ -21,15 +21,42 @@
     margin-bottom: 0;
 }
 
-.kcLabelWrapperClass {
-    display: block;
-}
-
 .kcLabelClass {
     display: block;
     margin-bottom: var(--space-4);
     font-size: var(--text-14);
     font-weight: var(--weight-semibold);
+    color: var(--secondary-foreground);
+}
+
+/* O UserProfileFormFields do keycloakify marca campo obrigatório com um nó de
+   TEXTO solto (" *"), irmão do <label> dentro deste wrapper — não é um elemento,
+   então não há seletor que o alcance:
+
+     <div class="kcLabelWrapperClass">
+       <label class="kcLabelClass">Nome de usuário</label>
+       {" *"}
+     </div>
+
+   Com o label em display:block, esse texto caía para a linha de baixo. Flex com
+   baseline põe os dois na mesma linha. O gap é necessário: o espaço que precede
+   o asterisco é descartado ao virar item flex anônimo.
+
+   A cor vem por herança — é a única forma de pintar um nó de texto: o wrapper
+   recebe a cor do asterisco e o label a sobrescreve para a sua. */
+.kcLabelWrapperClass {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    margin-bottom: var(--space-4);
+    color: var(--danger-soft-fg);
+}
+
+/* Sem display aqui: item de container flex é blockificado de qualquer forma, e a
+   largura já vem do conteúdo — o label não estica. Só o margin-bottom precisa
+   sair, senão empurra o asterisco para baixo da baseline. */
+.kcLabelWrapperClass .kcLabelClass {
+    margin-bottom: 0;
     color: var(--secondary-foreground);
 }
 

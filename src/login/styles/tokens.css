@@ -156,12 +156,24 @@
     --leading-relaxed: 1.5;
 }
 
-/* Modo escuro. O [data-theme="escuro"] do design system não redeclara --accent*,
-   então --accent-strong (#b45309) cairia a 3,65:1 sobre #0a1226. Aqui ele é
-   corrigido para #fbbf24 (10,4:1). O Keycloak não tem preferência de tema por
-   usuário, então isto segue prefers-color-scheme. */
+/* ---------------------------- Modo escuro ----------------------------
+   Selecionado de duas formas, de propósito:
+
+   1. prefers-color-scheme, para respeitar a preferência do sistema. O guarda
+      :not([data-theme="claro"]) permite forçar o claro mesmo num sistema escuro.
+   2. [data-theme="escuro"] no <html>, que é como o design system original
+      trocava de tema. É o que torna o modo escuro testável (Storybook) e
+      permite fixá-lo por deploy sem depender do sistema do usuário.
+
+   O [data-theme="escuro"] do design system NÃO redeclara --accent*, então
+   --accent-strong (#b45309) cairia a 3,65:1 sobre #0a1226. Aqui vai corrigido
+   para #fbbf24 (10,4:1).
+
+   ATENÇÃO: as duas listas abaixo são a mesma paleta e precisam andar juntas.
+   CSS não tem mixin; se mudar uma cor, mude nos dois blocos. */
+
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="claro"]) {
         --background: #0a1226;
         --foreground: #eef1f8;
         --card: #131e3b;
@@ -195,6 +207,41 @@
         --status-info-bg: #1b2d59;
         --status-info-fg: #aebbe3;
     }
+}
+
+:root[data-theme="escuro"] {
+    --background: #0a1226;
+    --foreground: #eef1f8;
+    --card: #131e3b;
+    --card-subtle: #172344;
+    --border: #22305a;
+    --border-subtle: #1e2b50;
+    --border-input: #2b3a68;
+    --muted: #1a2647;
+    --muted-foreground: #98a5c6;
+    --secondary-foreground: #c7d2ef;
+    --heading: #aebbe3;
+
+    --primary: #7d95d8;
+    --primary-foreground: #0a1226;
+    --primary-hover: #9db0e0;
+
+    /* O painel segue escuro; só desce um tom para casar com o fundo. */
+    --brand-panel-bg: #101a33;
+    --brand-panel-fg: #ffffff;
+
+    --accent-strong: #fbbf24;
+
+    --danger-soft-bg: #2d1119;
+    --danger-soft-border: #5c2130;
+    --danger-soft-fg: #fda4af;
+    --danger-soft-fg-strong: #fecdd3;
+    --status-success-bg: #0d3a2b;
+    --status-success-fg: #6ee7b7;
+    --status-warning-bg: #3d2c10;
+    --status-warning-fg: #fcd34d;
+    --status-info-bg: #1b2d59;
+    --status-info-fg: #aebbe3;
 }
 
 @keyframes fadeIn {

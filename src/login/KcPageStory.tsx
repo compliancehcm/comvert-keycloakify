@@ -20,6 +20,19 @@ export const { getKcContextMock } = createGetKcContextMock({
     overridesPerPage: {}
 });
 
+/* Idioma das stories.
+   O useI18n do keycloakify resolve o idioma por kcContext.locale.currentLanguageTag,
+   que vem do mock fixado em "en". Um decorator do Storybook não consegue injetar
+   dentro do kcContext que cada story constrói, então o seletor da toolbar grava
+   aqui e o KcPageStory lê no render. O decorator roda antes do render da story,
+   então a leitura sempre vê o valor atual.
+   Ver .storybook/preview.ts. */
+let storyLanguageTag: string | undefined = undefined;
+
+export function setStoryLanguageTag(languageTag: string | undefined) {
+    storyLanguageTag = languageTag;
+}
+
 export function createKcPageStory<PageId extends KcContext["pageId"]>(params: {
     pageId: PageId;
 }) {
@@ -35,7 +48,11 @@ export function createKcPageStory<PageId extends KcContext["pageId"]>(params: {
             overrides
         });
 
-        return <KcPage kcContext={kcContextMock} />;
+        if (storyLanguageTag !== undefined && kcContextMock.locale !== undefined) {
+            kcContextMock.locale.currentLanguageTag = storyLanguageTag;
+        }
+
+        return <KcPage kcContext={kcContextMock} key={storyLanguageTag} />;
     }
 
     return { KcPageStory };
