@@ -49,6 +49,35 @@ type ClientLike = {
 };
 
 /**
+ * Resolve o campo Name do client, tratando-o como chave de mensagem SOMENTE quando
+ * vem na forma `${chave}`.
+ *
+ * O advancedMsgStr do keycloakify resolve chave com ou sem as chaves -- por design,
+ * documentado: advancedMsgStr("access-denied") === advancedMsgStr("${access-denied}").
+ * Num campo de texto livre como o nome do client isso vira armadilha: verificado num
+ * Keycloak real, um client chamado literalmente "email" renderizava "Endereço de
+ * e-mail", porque `email` é chave do bundle. Nomes como "password", "username" ou
+ * "email" são plausíveis e o admin não tem como saber que colidem.
+ *
+ * Exigindo `${...}` explícito, a localização continua disponível para quem a quer e
+ * um nome comum nunca é reinterpretado.
+ */
+export function resolveClientName(params: {
+    name: string | undefined;
+    advancedMsgStr: (key: string) => string;
+}): string | undefined {
+    const { name, advancedMsgStr } = params;
+
+    if (name === undefined || name.trim() === "") {
+        return undefined;
+    }
+
+    const match = /^\$\{(.+)\}$/.exec(name.trim());
+
+    return match === null ? name : advancedMsgStr(match[1]);
+}
+
+/**
  * Resolve um texto na ordem: atributo do client para o idioma atual, atributo
  * genérico do client, e por último o padrão do tema (i18n).
  *

@@ -10,7 +10,7 @@ import type { I18n } from "../i18n";
 import { Alert } from "../components/Alert";
 import { EyeIcon, EyeOffIcon, MonitorIcon } from "../components/Icons";
 import { LocaleDropdown } from "../components/LocaleDropdown";
-import { CLIENT_TEXT_KEYS, resolveClientText } from "../clientText";
+import { CLIENT_TEXT_KEYS, resolveClientName, resolveClientText } from "../clientText";
 
 /* Reimplementação de keycloakify/login/pages/Login, remodelada para o design
    Compliance HCM. Todo o contrato do Keycloak é preservado — nomes de campo, ids,
@@ -70,10 +70,9 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
     const eyebrow = texto(CLIENT_TEXT_KEYS.eyebrow, msgStr("cvtLoginEyebrow"));
 
     /* Título, em tres camadas: atributo cvt.title, depois o nome do client, depois o
-       padrao do tema. O nome do client entra por advancedMsgStr -- e o que o
-       LoginOauthGrant do keycloakify faz -- porque o Keycloak aceita ${chave} no
-       campo nome, resolvida contra o bundle de i18n. String simples passa intacta. */
-    const nomeDoClient = client?.name !== undefined && client.name.trim() !== "" ? advancedMsgStr(client.name) : undefined;
+       padrao do tema. O nome so e tratado como chave de mensagem na forma ${chave} --
+       ver resolveClientName, que explica por que a forma sem chaves e armadilha. */
+    const nomeDoClient = resolveClientName({ name: client?.name, advancedMsgStr });
 
     const titulo = texto(CLIENT_TEXT_KEYS.title, nomeDoClient ?? msgStr("loginAccountTitle"));
     const lead = texto(CLIENT_TEXT_KEYS.lead, msgStr("cvtLoginLead"));
