@@ -34,6 +34,30 @@ const MARKUP = /* html */ `
     </div>
   </header>
 
+  <div class="pf-v5-c-page__sidebar" style="position:static; grid-area:auto; transform:none;">
+    <div class="pf-v5-c-page__sidebar-body">
+      <nav class="pf-v5-c-nav">
+        <ul class="pf-v5-c-nav__list">
+          <li class="pf-v5-c-nav__item">
+            <a class="pf-v5-c-nav__link pf-m-current" href="#" aria-current="page">Informações pessoais</a>
+          </li>
+          <li class="pf-v5-c-nav__item">
+            <a class="pf-v5-c-nav__link" href="#">Segurança da conta</a>
+          </li>
+          <li class="pf-v5-c-nav__item">
+            <a class="pf-v5-c-nav__link" href="#">Entrando</a>
+          </li>
+          <li class="pf-v5-c-nav__item">
+            <a class="pf-v5-c-nav__link" href="#">Atividade do dispositivo</a>
+          </li>
+          <li class="pf-v5-c-nav__item">
+            <a class="pf-v5-c-nav__link" href="#">Aplicativos</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
   <main class="pf-v5-c-page__main" style="padding:24px;">
 
     <h1 class="pf-v5-c-title pf-m-2xl" style="margin-bottom:4px;">Informações pessoais</h1>

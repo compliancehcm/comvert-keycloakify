@@ -102,6 +102,61 @@
     position: relative;
 }
 
+/* Navegação lateral.
+
+   O design system tem slots próprios para isso, com o comentário explícito
+   "sidebar sólida sobre o primary" -- ou seja, navy, não branca. Os valores abaixo
+   são os tokens --nav-* de tokens/colors.css, um a um:
+
+     --nav-bg        #2b4587    --nav-fg          #aebbe3
+     --nav-fg-strong #ffffff    --nav-muted       #8fa3d9
+     --nav-hover     rgba(255,255,255,.08)
+     --nav-active-bg rgba(255,255,255,.16)
+     --nav-active-fg #ffffff
+     --nav-border    rgba(255,255,255,.12)
+
+   Sem isto a navegação ficava no branco padrão do PatternFly, brigando com o
+   masthead navy logo acima dela. */
+.pf-v5-c-page__sidebar {
+    --pf-v5-c-page__sidebar--BackgroundColor: #2b4587;
+    --pf-v5-c-page__sidebar--BoxShadow: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pf-v5-c-page__sidebar .pf-v5-c-nav {
+    --pf-v5-c-nav__link--Color: #aebbe3;
+    --pf-v5-c-nav__link--BackgroundColor: transparent;
+
+    /* Item selecionado. A variável é --m-current--*, não --active--*: no
+       PatternFly v5 "active" é o estado pressionado do CSS, e quem pinta o item
+       corrente (classe pf-m-current) é este outro conjunto. Usar o errado deixava
+       o item selecionado com o cinza padrão do PatternFly. */
+    --pf-v5-c-nav__link--m-current--Color: #ffffff;
+    --pf-v5-c-nav__link--m-current--BackgroundColor: rgba(255, 255, 255, 0.16);
+    /* Marcador lateral do item corrente: o âmbar da marca */
+    --pf-v5-c-nav__link--m-current--after--BorderColor: #f5a623;
+
+    /* Pressionado e com foco */
+    --pf-v5-c-nav__link--active--Color: #ffffff;
+    --pf-v5-c-nav__link--active--BackgroundColor: rgba(255, 255, 255, 0.16);
+    --pf-v5-c-nav__link--focus--Color: #ffffff;
+    --pf-v5-c-nav__link--focus--BackgroundColor: rgba(255, 255, 255, 0.08);
+
+    --pf-v5-c-nav__link--after--BorderColor: transparent;
+
+    /* Título de seção e divisores sobre o navy */
+    --pf-v5-c-nav__section-title--Color: #8fa3d9;
+    --pf-v5-c-nav__section-title--BorderBottomColor: rgba(255, 255, 255, 0.12);
+    --pf-v5-c-nav--c-divider--BackgroundColor: rgba(255, 255, 255, 0.12);
+}
+
+/* O hover não tem variável própria no PatternFly v5 -- ele reusa a de focus na
+   regra :hover. Explicitar aqui garante o realce mesmo se isso mudar. */
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
 /* Cards: sem sombra (regra absoluta do design system) e com o raio de 12px do
    tema de login. O border-radius vai direto na propriedade porque o PatternFly v5
    só arredonda card via a classe pf-m-rounded, que não está no markup do console. */
