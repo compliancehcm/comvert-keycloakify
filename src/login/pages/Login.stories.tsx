@@ -358,3 +358,72 @@ export const WithSocialProvidersAndWithoutRememberMe: Story = {
         />
     )
 };
+
+/**
+ * Textos sobrescritos por atributo do client.
+ *
+ * O Keycloak entrega `kcContext.client.attributes` como um mapa livre de
+ * string -> string (verificado num Keycloak 26.7 real). O tema lê os atributos
+ * com prefixo `cvt.` e cai no padrão do i18n quando ausentes, então um client
+ * sem atributo nenhum renderiza exatamente como a story Default.
+ *
+ * Não use `client.name`/`client.description` para isso: o Keycloak reaproveita
+ * esses dois na tela de consentimento e na lista "Aplicativos" do console de
+ * account. Ver src/login/clientText.ts.
+ */
+export const WithClientTextOverrides: Story = {
+    render: () => (
+        <KcPageStory
+            kcContext={{
+                client: {
+                    clientId: "portal-dp",
+                    name: "Portal do Departamento Pessoal",
+                    attributes: {
+                        "cvt.eyebrow": "Acesso da folha",
+                        "cvt.title": "Entrar no Portal do Departamento Pessoal",
+                        "cvt.lead": "Fechamento, admissões e eSocial",
+                        "cvt.footerNote": "Sessão auditada. Dúvidas com o time de folha."
+                    }
+                }
+            }}
+        />
+    )
+};
+
+/** Atributo em branco não deve apagar o texto: tem de cair no padrão do tema. */
+export const WithBlankClientAttribute: Story = {
+    render: () => (
+        <KcPageStory
+            kcContext={{
+                client: {
+                    clientId: "portal-dp",
+                    attributes: { "cvt.title": "   ", "cvt.eyebrow": "" }
+                }
+            }}
+        />
+    )
+};
+
+/**
+ * Título vindo do nome do client, sem nenhum atributo.
+ *
+ * Esta é a via editável pela interface do admin: o campo Name do client, que o
+ * Keycloak já usa como nome da aplicação. Funciona porque o título da tela É o
+ * nome da aplicação -- o mesmo texto fica correto aqui e na tela de consentimento
+ * ("Conceder acesso a Portal do Departamento Pessoal").
+ *
+ * O nome passa por advancedMsgStr, então `${chave}` no campo Name é resolvido
+ * contra o bundle de i18n, permitindo nome de client localizado.
+ */
+export const WithClientNameAsTitle: Story = {
+    render: () => (
+        <KcPageStory
+            kcContext={{
+                client: {
+                    clientId: "portal-dp",
+                    name: "Portal do Departamento Pessoal"
+                }
+            }}
+        />
+    )
+};

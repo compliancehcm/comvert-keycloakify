@@ -10,6 +10,7 @@ import type { I18n } from "../i18n";
 import { Alert } from "../components/Alert";
 import { EyeIcon, EyeOffIcon, MonitorIcon } from "../components/Icons";
 import { LocaleDropdown } from "../components/LocaleDropdown";
+import { CLIENT_TEXT_KEYS, resolveClientText } from "../clientText";
 
 /* Reimplementação de keycloakify/login/pages/Login, remodelada para o design
    Compliance HCM. Todo o contrato do Keycloak é preservado — nomes de campo, ids,
@@ -38,10 +39,11 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
         enableWebAuthnConditionalUI,
         authenticators,
         message,
-        isAppInitiatedAction
+        isAppInitiatedAction,
+        client
     } = kcContext;
 
-    const { msg, msgStr, enabledLanguages } = i18n;
+    const { msg, msgStr, advancedMsgStr, currentLanguage, enabledLanguages } = i18n;
 
     const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
 
@@ -61,6 +63,22 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
 
     const socialProviders = realm.password && social?.providers !== undefined ? social.providers : [];
 
+    /* Textos da coluna da direita: o client pode sobrescrever cada um por atributo,
+       e sem atributo cai no padrao do tema. Ver src/login/clientText.ts. */
+    const texto = (key: string, fallback: string) => resolveClientText({ client, key, languageTag: currentLanguage.languageTag, fallback });
+
+    const eyebrow = texto(CLIENT_TEXT_KEYS.eyebrow, msgStr("cvtLoginEyebrow"));
+
+    /* Título, em tres camadas: atributo cvt.title, depois o nome do client, depois o
+       padrao do tema. O nome do client entra por advancedMsgStr -- e o que o
+       LoginOauthGrant do keycloakify faz -- porque o Keycloak aceita ${chave} no
+       campo nome, resolvida contra o bundle de i18n. String simples passa intacta. */
+    const nomeDoClient = client?.name !== undefined && client.name.trim() !== "" ? advancedMsgStr(client.name) : undefined;
+
+    const titulo = texto(CLIENT_TEXT_KEYS.title, nomeDoClient ?? msgStr("loginAccountTitle"));
+    const lead = texto(CLIENT_TEXT_KEYS.lead, msgStr("cvtLoginLead"));
+    const notaRodape = texto(CLIENT_TEXT_KEYS.footerNote, msgStr("cvtLoginFooterNote"));
+
     return (
         <Template
             kcContext={kcContext}
@@ -68,7 +86,10 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
             doUseDefaultCss={doUseDefaultCss}
             classes={classes}
             displayMessage={false}
-            headerNode={msg("loginAccountTitle")}
+            /* O Template não desenha cabeçalho na página de login -- o título é
+               renderizado aqui embaixo. Ainda assim passa o valor já resolvido, para
+               não haver duas fontes de verdade se o Template passar a usá-lo. */
+            headerNode={titulo}
             displayInfo={showRegistration || showLanguages}
             infoNode={
                 <div className="cvt-login__footer">
@@ -82,7 +103,7 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                             </div>
                         </div>
                     )}
-                    <div className="cvt-login__note">{msg("cvtLoginFooterNote")}</div>
+                    <div className="cvt-login__note">{notaRodape}</div>
                 </div>
             }
             socialProvidersNode={
@@ -122,7 +143,7 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                 )
             }
         >
-            <div className="cvt-eyebrow">{msg("cvtLoginEyebrow")}</div>
+            <div className="cvt-eyebrow">{eyebrow}</div>
 
             {auth !== undefined && auth.showUsername && !auth.showResetCredentials ? (
                 /* O design não tem slot para o "usuário já identificado", então esse
@@ -138,9 +159,9 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
             ) : (
                 <>
                     <h1 id="kc-page-title" className="cvt-page__title">
-                        {msg("loginAccountTitle")}
+                        {titulo}
                     </h1>
-                    <p className="cvt-login__lead">{msg("cvtLoginLead")}</p>
+                    <p className="cvt-login__lead">{lead}</p>
                 </>
             )}
 
