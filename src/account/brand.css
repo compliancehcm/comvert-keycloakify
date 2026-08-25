@@ -71,35 +71,30 @@
         "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
-/* Masthead navy, como o painel da tela de login. O PatternFly já expõe as
-   variáveis do masthead; sobrescrevê-las evita regra por elemento. */
+/* Masthead navy, como o painel da tela de login, com a régua âmbar por baixo — o
+   mesmo detalhe do painel de marca do login e do cabeçalho dos e-mails, para as
+   três superfícies se lerem como a mesma família.
+
+   A régua é border-block-end e não um ::after posicionado: o masthead do
+   PatternFly v5 não declara position, então um pseudo-elemento absoluto se
+   ancorava no primeiro ancestral posicionado e não aparecia. Borda sempre
+   renderiza, ocupa espaço no layout e é verificável por getComputedStyle -- ao
+   contrário do computed style de um pseudo-elemento, que devolve valor mesmo
+   quando nenhuma caixa é gerada (foi assim que a régua ausente passou pela minha
+   verificação anterior).
+
+   Não existe --pf-v5-c-masthead--BorderBottom* no PatternFly v5: a declaração
+   anterior desse token não fazia nada. */
 .pf-v5-c-masthead {
     --pf-v5-c-masthead--BackgroundColor: #2b4587;
     --pf-v5-c-masthead--Color: #ffffff;
-    --pf-v5-c-masthead--BorderBottomColor: rgba(255, 255, 255, 0.12);
     color: #ffffff;
+    border-block-end: 3px solid #f5a623;
 }
 
 .pf-v5-c-masthead a,
 .pf-v5-c-masthead .pf-v5-c-button {
     color: #ffffff;
-}
-
-/* Régua âmbar sob o masthead — o mesmo detalhe do painel de marca do login e do
-   cabeçalho dos e-mails, para as três superfícies se lerem como a mesma família. */
-.pf-v5-c-masthead::after {
-    content: "";
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 3px;
-    background: #f5a623;
-}
-
-.pf-v5-c-masthead {
-    position: relative;
 }
 
 /* Navegação lateral.
@@ -155,6 +150,56 @@
 .pf-v5-c-page__sidebar .pf-v5-c-nav__link:hover {
     background-color: rgba(255, 255, 255, 0.08);
     color: #ffffff;
+}
+
+/* Divisor entre as opções do menu, no --nav-border do design system.
+   O token --pf-v5-c-nav--c-divider--BackgroundColor declarado acima só pinta o
+   componente Divider onde ele existe no markup, e a navegação do console não usa
+   nenhum -- então a linha precisa vir do próprio item.
+
+   O segundo seletor cobre grupos expansíveis. A navegação real tem um:
+
+     li.pf-v5-c-nav__item.pf-m-expandable   "Segurança da conta"
+       button.pf-v5-c-nav__link
+       section.pf-v5-c-nav__subnav
+         ul.pf-v5-c-nav__list               "Entrando", "Atividade do dispositivo"
+
+   Só com o combinador de irmãos, o primeiro filho do grupo ficava sem linha
+   separando-o do próprio cabeçalho -- e o ritmo do menu saía irregular. */
+.pf-v5-c-page__sidebar .pf-v5-c-nav__item + .pf-v5-c-nav__item,
+.pf-v5-c-page__sidebar .pf-v5-c-nav__subnav .pf-v5-c-nav__item:first-child {
+    border-block-start: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Títulos e textos de destaque, nos tokens do design system.
+
+   O .pf-v5-c-title do PatternFly v5 não declara cor nenhuma -- ele herda do body,
+   que aqui é --foreground (#101a33). O design system manda outra coisa:
+   --heading e --row-title são #2b4587, com a nota "Títulos e listas — nunca texto
+   preto puro". Daí a cor ir por regra, não por token.
+
+   Escopado em .pf-v5-c-page__main de propósito: dentro do sidebar navy, um título
+   em #2b4587 ficaria navy sobre navy. */
+.pf-v5-c-page__main :is(h1, h2, h3, .pf-v5-c-title) {
+    color: #2b4587;
+}
+
+/* Rótulo de campo: --secondary-foreground, o mesmo peso e cor dos rótulos do
+   formulário de login. */
+.pf-v5-c-page__main .pf-v5-c-form__label-text {
+    color: #3c4a6b;
+    font-weight: 600;
+}
+
+/* O asterisco de obrigatório acompanha o danger, como no tema de login. */
+.pf-v5-c-page__main .pf-v5-c-form__label-required {
+    color: #be123c;
+}
+
+/* Texto de apoio sob os títulos: --muted-foreground. */
+.pf-v5-c-page__main .pf-v5-u-color-200,
+.pf-v5-c-page__main .pf-v5-c-form__helper-text {
+    color: #5b6784;
 }
 
 /* Cards: sem sombra (regra absoluta do design system) e com o raio de 12px do

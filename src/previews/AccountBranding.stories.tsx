@@ -41,14 +41,25 @@ const MARKUP = /* html */ `
           <li class="pf-v5-c-nav__item">
             <a class="pf-v5-c-nav__link pf-m-current" href="#" aria-current="page">Informações pessoais</a>
           </li>
-          <li class="pf-v5-c-nav__item">
-            <a class="pf-v5-c-nav__link" href="#">Segurança da conta</a>
-          </li>
-          <li class="pf-v5-c-nav__item">
-            <a class="pf-v5-c-nav__link" href="#">Entrando</a>
-          </li>
-          <li class="pf-v5-c-nav__item">
-            <a class="pf-v5-c-nav__link" href="#">Atividade do dispositivo</a>
+          <!-- Grupo expansível, como na navegação real do console: "Segurança da
+               conta" é um <button> com um subnav aninhado, não um link simples.
+               A preview precisa da mesma estrutura, senão não exercita o divisor
+               do primeiro filho do grupo. -->
+          <li class="pf-v5-c-nav__item pf-m-expandable pf-m-expanded">
+            <button class="pf-v5-c-nav__link" type="button" aria-expanded="true">
+              Segurança da conta
+              <span class="pf-v5-c-nav__toggle"></span>
+            </button>
+            <section class="pf-v5-c-nav__subnav">
+              <ul class="pf-v5-c-nav__list">
+                <li class="pf-v5-c-nav__item">
+                  <a class="pf-v5-c-nav__link" href="#">Entrando</a>
+                </li>
+                <li class="pf-v5-c-nav__item">
+                  <a class="pf-v5-c-nav__link" href="#">Atividade do dispositivo</a>
+                </li>
+              </ul>
+            </section>
           </li>
           <li class="pf-v5-c-nav__item">
             <a class="pf-v5-c-nav__link" href="#">Aplicativos</a>
