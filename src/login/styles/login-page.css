@@ -77,20 +77,20 @@
     color: var(--muted-foreground);
 }
 
-/* Rodapé: seletor de idioma, link de cadastro e a nota de acesso. */
+/* Rodapé: seletor de idioma, link de cadastro e a nota de acesso.
+   SÓ layout aqui — sem borda, sem margin-top, sem padding-top. A hairline de
+   separação vem do .kcSignUpClass, que é o wrapper que o Template põe em volta
+   do infoNode e vale para todas as páginas:
+
+     <div class="kcSignUpClass">        <- a linha mora aqui
+       <div id="kc-info-wrapper">
+         <div class="cvt-login__footer"> <- só flex + gap
+
+   Duplicar a borda nos dois desenhava duas linhas depois do botão Entrar. */
 .cvt-login__footer {
-    margin-top: var(--space-14);
-    padding-top: var(--space-10);
-    border-top: var(--border-width) solid var(--border);
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
-}
-
-.cvt-login__footer .kcSignUpClass {
-    margin-top: 0;
-    padding-top: 0;
-    border-top: none;
 }
 
 /* O seletor de idioma no login mora no rodapé, não no topo. */
