@@ -1,6 +1,6 @@
 {
     "name": "comvert-keycloakify",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "Tema Keycloak (login) da Comvert, baseado no Keycloakify 11",
     "repository": {
         "type": "git",
