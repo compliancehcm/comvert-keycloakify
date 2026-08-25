@@ -50,7 +50,11 @@
     --pf-v5-global--info-color--100: #3a56a0;
     --pf-v5-global--info-color--200: #233a72;
 
-    /* Raio: controles 8px, cards 12px, igual ao tema de login */
+    /* Raio. Estes dois tokens cobrem botões e afins, mas NÃO cards nem inputs:
+       no PatternFly v5 o card é quadrado por padrão (só arredonda com a classe
+       pf-m-rounded, que não controlamos — o markup é do upstream) e o
+       form-control não expõe variável de raio alguma. Os dois são forçados
+       abaixo, por seletor. */
     --pf-v5-global--BorderRadius--sm: 8px;
     --pf-v5-global--BorderRadius--lg: 12px;
 
@@ -98,8 +102,20 @@
     position: relative;
 }
 
-/* Cards sem sombra — regra absoluta do design system. */
+/* Cards: sem sombra (regra absoluta do design system) e com o raio de 12px do
+   tema de login. O border-radius vai direto na propriedade porque o PatternFly v5
+   só arredonda card via a classe pf-m-rounded, que não está no markup do console. */
 .pf-v5-c-card {
     --pf-v5-c-card--BoxShadow: none;
     border: 1px solid #e0e5f0;
+    border-radius: 12px;
+}
+
+/* Inputs com os mesmos 8px dos controles do login. O form-control do PatternFly v5
+   desenha a borda em ::before, então o raio precisa ir nos dois, senão a linha da
+   borda corta reto por cima do canto arredondado. */
+.pf-v5-c-form-control,
+.pf-v5-c-form-control::before,
+.pf-v5-c-form-control::after {
+    border-radius: 8px;
 }
