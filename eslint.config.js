@@ -23,7 +23,11 @@ export default typescriptEslint.config(
             "public/**",
             "dist_keycloak/**",
             "storybook-static/**",
-            "tema_compliancehcm/**"
+            "tema_compliancehcm/**",
+            // Código vendorizado pelas extensões do Keycloakify (re-exports do
+            // PatternFly e o keycloak-ui-shared do upstream). Copiado por
+            // `keycloakify sync-extensions`, gitignored, e não é nosso para corrigir.
+            "src/shared/**"
         ]
     },
     {

@@ -1,0 +1,105 @@
+/* Marca Compliance HCM sobre a Account Console v3.
+   Importado DEPOIS do CSS do PatternFly em KcAccountUi.tsx, então vence na cascata.
+
+   A abordagem é redeclarar os tokens globais do PatternFly v5, não escrever regras
+   por componente: o console é a UI de upstream do Keycloak e vai mudar de markup a
+   cada versão do @keycloakify/keycloak-account-ui. Seletor de componente quebraria
+   no próximo upgrade; token global sobrevive.
+
+   Os hexes são os mesmos de src/login/styles/tokens.css. Aqui eles ficam escritos à
+   mão de propósito: esta folha entra no bundle de account, que não carrega o CSS do
+   tema de login, então não há como referenciar as custom properties de lá. Ao mudar
+   uma cor no design system, mudar nos dois lugares. */
+
+:root {
+    /* Azul primário -> navy da marca. É o que pinta botões primários, links,
+       item ativo da navegação e foco. */
+    --pf-v5-global--primary-color--100: #2b4587;
+    --pf-v5-global--primary-color--200: #233a72;
+    --pf-v5-global--primary-color--300: #3a56a0;
+    --pf-v5-global--link--Color: #2b4587;
+    --pf-v5-global--link--Color--hover: #233a72;
+    --pf-v5-global--active-color--100: #2b4587;
+    --pf-v5-global--active-color--200: #aebbe3;
+    --pf-v5-global--active-color--300: #3a56a0;
+    --pf-v5-global--active-color--400: #8fa3d9;
+
+    /* Superfícies e fundo */
+    --pf-v5-global--BackgroundColor--100: #ffffff;
+    --pf-v5-global--BackgroundColor--150: #fbfcfe;
+    --pf-v5-global--BackgroundColor--200: #f4f6fb;
+    --pf-v5-global--BackgroundColor--light-300: #eef1f8;
+
+    /* Texto — o design system nunca usa preto puro */
+    --pf-v5-global--Color--100: #101a33;
+    --pf-v5-global--Color--200: #5b6784;
+
+    /* Bordas */
+    --pf-v5-global--BorderColor--100: #e0e5f0;
+    --pf-v5-global--BorderColor--200: #d5dbeb;
+    --pf-v5-global--BorderColor--300: #eef1f8;
+
+    /* Estados. O âmbar da marca entra como aviso, que é o papel semântico que ele
+       tem no design (a régua e as pílulas de destaque). */
+    --pf-v5-global--danger-color--100: #be123c;
+    --pf-v5-global--danger-color--200: #9f1239;
+    --pf-v5-global--success-color--100: #10b981;
+    --pf-v5-global--success-color--200: #065f46;
+    --pf-v5-global--warning-color--100: #f5a623;
+    --pf-v5-global--warning-color--200: #b45309;
+    --pf-v5-global--info-color--100: #3a56a0;
+    --pf-v5-global--info-color--200: #233a72;
+
+    /* Raio: controles 8px, cards 12px, igual ao tema de login */
+    --pf-v5-global--BorderRadius--sm: 8px;
+    --pf-v5-global--BorderRadius--lg: 12px;
+
+    /* Tipografia. A Inter é auto-hospedada pelo tema, mas o bundle de account é
+       separado do de login, então aqui ela é declarada como preferência e cai na
+       pilha do sistema se não estiver disponível no contexto de account. */
+    --pf-v5-global--FontFamily--text:
+        "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
+    --pf-v5-global--FontFamily--heading:
+        "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
+    --pf-v5-global--FontFamily--redhat-updated--text:
+        "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
+    --pf-v5-global--FontFamily--redhat-updated--heading:
+        "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Masthead navy, como o painel da tela de login. O PatternFly já expõe as
+   variáveis do masthead; sobrescrevê-las evita regra por elemento. */
+.pf-v5-c-masthead {
+    --pf-v5-c-masthead--BackgroundColor: #2b4587;
+    --pf-v5-c-masthead--Color: #ffffff;
+    --pf-v5-c-masthead--BorderBottomColor: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.pf-v5-c-masthead a,
+.pf-v5-c-masthead .pf-v5-c-button {
+    color: #ffffff;
+}
+
+/* Régua âmbar sob o masthead — o mesmo detalhe do painel de marca do login e do
+   cabeçalho dos e-mails, para as três superfícies se lerem como a mesma família. */
+.pf-v5-c-masthead::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: #f5a623;
+}
+
+.pf-v5-c-masthead {
+    position: relative;
+}
+
+/* Cards sem sombra — regra absoluta do design system. */
+.pf-v5-c-card {
+    --pf-v5-c-card--BoxShadow: none;
+    border: 1px solid #e0e5f0;
+}

@@ -5,3 +5,6 @@ node_modules/
 /.vscode/
 /.yarn_home/
 /tema_compliancehcm/
+
+# FreeMarker: o Prettier nao tem parser para .ftl
+*.ftl
