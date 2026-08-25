@@ -37,11 +37,27 @@
  *  atributos que o próprio Keycloak guarda no mesmo mapa. */
 const PREFIX = "cvt.";
 
+/** Coluna do formulário (direita). Só a página de login usa estes. */
 export const CLIENT_TEXT_KEYS = {
     eyebrow: `${PREFIX}eyebrow`,
     title: `${PREFIX}title`,
     lead: `${PREFIX}lead`,
     footerNote: `${PREFIX}footerNote`
+} as const;
+
+/** Painel de marca (esquerda). Renderizado pelo Template, portanto vale para TODAS
+ *  as páginas de autenticação, não só o login. */
+export const CLIENT_BRAND_KEYS = {
+    subtitle: `${PREFIX}brand.subtitle`,
+    headline: `${PREFIX}brand.headline`,
+    lead: `${PREFIX}brand.lead`,
+    stat1Value: `${PREFIX}brand.stat1Value`,
+    stat1Label: `${PREFIX}brand.stat1Label`,
+    stat2Value: `${PREFIX}brand.stat2Value`,
+    stat2Label: `${PREFIX}brand.stat2Label`,
+    stat3Value: `${PREFIX}brand.stat3Value`,
+    stat3Label: `${PREFIX}brand.stat3Label`,
+    copyright: `${PREFIX}brand.copyright`
 } as const;
 
 type ClientLike = {

@@ -8,6 +8,7 @@ import type { I18n } from "./i18n";
 import type { KcContext } from "./KcContext";
 import { Alert } from "./components/Alert";
 import { LocaleDropdown } from "./components/LocaleDropdown";
+import { CLIENT_BRAND_KEYS, resolveClientText } from "./clientText";
 import logoUrl from "./assets/logo-compliance-branco.png";
 
 /** Páginas que se auto-submetem e nunca são realmente vistas: um painel de marketing
@@ -49,9 +50,24 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
     const { kcClsx } = getKcClsx({ doUseDefaultCss, classes });
 
-    const { msg, msgStr, enabledLanguages } = i18n;
+    const { msg, msgStr, currentLanguage, enabledLanguages } = i18n;
 
-    const { realm, auth, url, message, isAppInitiatedAction, pageId } = kcContext;
+    const { realm, auth, url, message, isAppInitiatedAction, pageId, client } = kcContext;
+
+    /* Painel de marca: cada texto pode vir de um atributo do client, caindo no padrão
+       do tema quando ausente. Ver src/login/clientText.ts e docs/atributos-do-client.md.
+
+       Nota: o Template envolve as 36 páginas, e em algumas o `client` vem reduzido --
+       error.ftl, por exemplo, declara apenas { baseUrl }. Nessas o painel cai no
+       padrão do tema, que é o comportamento correto: melhor o texto institucional que
+       um painel vazio. O resolveClientText já trata client/attributes ausentes. */
+    const marca = (key: string, fallback: string) =>
+        resolveClientText({
+            client,
+            key,
+            languageTag: currentLanguage.languageTag,
+            fallback
+        });
 
     useEffect(() => {
         document.title = documentTitle ?? msgStr("loginTitle", realm.displayName);
@@ -171,28 +187,28 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                     <div id="kc-header-wrapper" className={kcClsx("kcHeaderWrapperClass")}>
                         <img className="cvt-brand__logo" src={logoUrl} alt={msgStr("cvtBrandAlt")} />
                     </div>
-                    <div className="cvt-brand__subtitle">{msg("cvtBrandSubtitle")}</div>
+                    <div className="cvt-brand__subtitle">{marca(CLIENT_BRAND_KEYS.subtitle, msgStr("cvtBrandSubtitle"))}</div>
                 </div>
                 <div className="cvt-brand__body">
                     <div className="cvt-rule" aria-hidden="true"></div>
-                    <h2 className="cvt-brand__headline">{msg("cvtBrandHeadline")}</h2>
-                    <p className="cvt-brand__lead">{msg("cvtBrandLead")}</p>
+                    <h2 className="cvt-brand__headline">{marca(CLIENT_BRAND_KEYS.headline, msgStr("cvtBrandHeadline"))}</h2>
+                    <p className="cvt-brand__lead">{marca(CLIENT_BRAND_KEYS.lead, msgStr("cvtBrandLead"))}</p>
                     <div className="cvt-stats">
                         <div className="cvt-stat">
-                            <div className="cvt-stat__value">{msg("cvtStat1Value")}</div>
-                            <div className="cvt-stat__label">{msg("cvtStat1Label")}</div>
+                            <div className="cvt-stat__value">{marca(CLIENT_BRAND_KEYS.stat1Value, msgStr("cvtStat1Value"))}</div>
+                            <div className="cvt-stat__label">{marca(CLIENT_BRAND_KEYS.stat1Label, msgStr("cvtStat1Label"))}</div>
                         </div>
                         <div className="cvt-stat">
-                            <div className="cvt-stat__value">{msg("cvtStat2Value")}</div>
-                            <div className="cvt-stat__label">{msg("cvtStat2Label")}</div>
+                            <div className="cvt-stat__value">{marca(CLIENT_BRAND_KEYS.stat2Value, msgStr("cvtStat2Value"))}</div>
+                            <div className="cvt-stat__label">{marca(CLIENT_BRAND_KEYS.stat2Label, msgStr("cvtStat2Label"))}</div>
                         </div>
                         <div className="cvt-stat">
-                            <div className="cvt-stat__value">{msg("cvtStat3Value")}</div>
-                            <div className="cvt-stat__label">{msg("cvtStat3Label")}</div>
+                            <div className="cvt-stat__value">{marca(CLIENT_BRAND_KEYS.stat3Value, msgStr("cvtStat3Value"))}</div>
+                            <div className="cvt-stat__label">{marca(CLIENT_BRAND_KEYS.stat3Label, msgStr("cvtStat3Label"))}</div>
                         </div>
                     </div>
                 </div>
-                <div className="cvt-brand__footer">{msg("cvtCopyright")}</div>
+                <div className="cvt-brand__footer">{marca(CLIENT_BRAND_KEYS.copyright, msgStr("cvtCopyright"))}</div>
             </section>
             <section className="cvt-split__form">
                 <div className={clsx("cvt-split__inner", WIDE_CONTENT_PAGE_IDS.has(pageId) && "cvt-split__inner--wide")}>{content}</div>
