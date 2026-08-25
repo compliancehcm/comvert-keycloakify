@@ -60,3 +60,6 @@ jspm_packages
 # contém ativos de marca da Oracle (OracleBrandVF*.woff2, redwood-*.svg) que o
 # readme do próprio design system proíbe redistribuir — e este repo é público.
 /tema_compliancehcm/
+
+# Snapshots da ferramenta de automacao de browser (Playwright MCP), nao do projeto
+/.playwright-mcp/
