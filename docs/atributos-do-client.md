@@ -47,6 +47,33 @@ Ordem de resolução de cada texto:
 >
 > O painel é escondido abaixo de 900px de largura, então em celular esses textos não aparecem.
 
+### Campo de usuário, "Esqueci minha senha" e "Entrar como" — só na página de login
+
+| Atributo                  | O que controla                                                                                                                                   | Padrão do tema                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `cvt.usernameLabel`       | O rótulo do campo de usuário (ex.: `CPF`)                                                                                                        | `E-mail corporativo` (ou o do Keycloak, sem login por e-mail no realm) |
+| `cvt.usernamePlaceholder` | O exemplo dentro do campo (ex.: `000.000.000-00`)                                                                                                | `nome@compliancesolucoes.com.br` (idem)                                |
+| `cvt.usernameMask`        | Máscara do campo. Só `cpf`: mostra `000.000.000-00`, teclado numérico no celular, e **envia só os dígitos** (o usuário no Keycloak é o CPF puro) | sem máscara                                                            |
+| `cvt.forgotPasswordUrl`   | Endereço do link "Esqueci minha senha" quando a **aplicação** trata a recuperação. Aparece mesmo com o reset do realm desligado                  | o reset do Keycloak, se o realm o permitir                             |
+| `cvt.profiles`            | Os chips de "Entrar como" (JSON, ver abaixo)                                                                                                     | sem chips                                                              |
+
+Os dois primeiros são texto e aceitam a variante por idioma (`cvt.usernameLabel.en`). Os endereços só valem com `http`/`https`; qualquer outra coisa é ignorada (o atributo vira `href`).
+
+`cvt.profiles` é uma lista JSON, um item por tela de login — cada perfil é um client. O da tela atual leva `"current": true` e aparece marcado, sem link:
+
+```json
+[
+    { "label": "Departamento pessoal", "url": "https://portal/api/auth/login" },
+    {
+        "label": "Candidato",
+        "url": "https://portal/api/auth/login?perfil=candidato",
+        "current": true
+    }
+]
+```
+
+A `url` deve iniciar o login **pela aplicação** (no Comvert Portal, `/api/auth/login?perfil=…`), não ir direto ao Keycloak: é a aplicação que monta o pedido de autorização (PKCE, state). JSON ilegível ou item sem `label`/`url` válida é descartado — a tela segue sem os chips em vez de quebrar.
+
 ## Variação por idioma
 
 Atributo de client **não é traduzido** pelo Keycloak — é uma string só. Para variar por idioma, sufixe a chave com a tag do locale:
@@ -173,7 +200,8 @@ No JSON do realm, dentro do client:
 - [`src/login/clientText.ts`](../src/login/clientText.ts) — resolução e a lista de chaves
 - [`src/login/pages/Login.tsx`](../src/login/pages/Login.tsx) — a coluna do formulário
 - [`src/login/Template.tsx`](../src/login/Template.tsx) — o painel de marca
-- Stories no Storybook: `WithClientTextOverrides`, `WithClientNameAsTitle`, `WithBlankClientAttribute`
+- [`src/login/cpf.ts`](../src/login/cpf.ts) — a máscara de CPF
+- Stories no Storybook: `WithClientTextOverrides`, `WithClientNameAsTitle`, `WithBlankClientAttribute`, `WithCandidateLogin`
 
 ---
 

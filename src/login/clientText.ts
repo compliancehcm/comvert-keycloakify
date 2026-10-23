@@ -60,6 +60,30 @@ export const CLIENT_BRAND_KEYS = {
     copyright: `${PREFIX}brand.copyright`
 } as const;
 
+/** Comportamento da página de login por client: o campo de usuário, o link de
+ *  "Esqueci minha senha" e os perfis de "Entrar como". Mesma regra dos textos:
+ *  ausente, vazio ou inválido, vale o padrão do tema. */
+export const CLIENT_LOGIN_KEYS = {
+    /** Rótulo do campo de usuário (ex.: "CPF"). Texto: aceita a variante por idioma. */
+    usernameLabel: `${PREFIX}usernameLabel`,
+    /** Exemplo dentro do campo (ex.: "000.000.000-00"). Texto: aceita a variante por idioma. */
+    usernamePlaceholder: `${PREFIX}usernamePlaceholder`,
+    /** Máscara do campo. Só `cpf`: formata 000.000.000-00 e envia só os dígitos. */
+    usernameMask: `${PREFIX}usernameMask`,
+    /** Endereço do "Esqueci minha senha" fora do Keycloak (a aplicação trata). */
+    forgotPasswordUrl: `${PREFIX}forgotPasswordUrl`,
+    /** JSON com os perfis de "Entrar como": [{"label","url","current"?}]. */
+    profiles: `${PREFIX}profiles`
+} as const;
+
+/** Um perfil de "Entrar como": cada um é uma tela de login (um client). */
+export type ClientProfile = {
+    label: string;
+    url: string;
+    /** O perfil desta tela: aparece marcado, sem link. */
+    current: boolean;
+};
+
 type ClientLike = {
     attributes?: Record<string, string>;
 };
@@ -129,4 +153,62 @@ export function resolveClientText(params: {
     }
 
     return fallback;
+}
+
+/** Só http(s): o atributo vira `href`, e `javascript:` ali seria script na tela de login. */
+function urlSegura(valor: unknown): string | undefined {
+    if (typeof valor !== "string") {
+        return undefined;
+    }
+    try {
+        const url = new URL(valor.trim());
+        return url.protocol === "https:" || url.protocol === "http:"
+            ? url.href
+            : undefined;
+    } catch {
+        return undefined;
+    }
+}
+
+/** Atributo de endereço do client, validado; `undefined` se ausente ou inválido. */
+export function resolveClientUrl(params: {
+    client: ClientLike | undefined;
+    key: string;
+}): string | undefined {
+    const { client, key } = params;
+    return urlSegura(client?.attributes?.[key]);
+}
+
+/**
+ * Os perfis de "Entrar como", do JSON em `cvt.profiles`. Entrada sem `label` ou
+ * com `url` inválida é descartada; JSON ilegível vira lista vazia (a tela segue
+ * sem os perfis, em vez de quebrar o login inteiro por um erro de configuração).
+ */
+export function resolveClientProfiles(client: ClientLike | undefined): ClientProfile[] {
+    const bruto = client?.attributes?.[CLIENT_LOGIN_KEYS.profiles];
+    if (typeof bruto !== "string" || bruto.trim() === "") {
+        return [];
+    }
+
+    let lista: unknown;
+    try {
+        lista = JSON.parse(bruto);
+    } catch {
+        return [];
+    }
+    if (!Array.isArray(lista)) {
+        return [];
+    }
+
+    return lista.flatMap((item): ClientProfile[] => {
+        if (typeof item !== "object" || item === null) {
+            return [];
+        }
+        const { label, url, current } = item as Record<string, unknown>;
+        const href = urlSegura(url);
+        if (typeof label !== "string" || label.trim() === "" || href === undefined) {
+            return [];
+        }
+        return [{ label: label.trim(), url: href, current: current === true }];
+    });
 }

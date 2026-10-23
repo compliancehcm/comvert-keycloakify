@@ -34,6 +34,7 @@ const { useI18n, ofTypeI18n } = i18nBuilder
             cvtLoginIdPlaceholder: "nome@compliancesolucoes.com.br",
             cvtLoginFooterNote: "Acesso monitorado e registrado em log de auditoria.",
             cvtOr: "ou",
+            cvtSignInAs: "Entrar como",
 
             // --- Botao de tema ---
             cvtThemeToggle: "Tema",
@@ -69,6 +70,7 @@ const { useI18n, ofTypeI18n } = i18nBuilder
             cvtLoginIdPlaceholder: "name@compliancesolucoes.com.br",
             cvtLoginFooterNote: "Access is monitored and recorded in the audit log.",
             cvtOr: "or",
+            cvtSignInAs: "Sign in as",
 
             cvtThemeToggle: "Theme",
             cvtThemeSystem: "system",

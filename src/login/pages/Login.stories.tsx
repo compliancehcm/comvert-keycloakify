@@ -390,6 +390,43 @@ export const WithClientTextOverrides: Story = {
     )
 };
 
+/**
+ * Tela do candidato da pré-admissão: campo de usuário "CPF" com máscara,
+ * "Esqueci minha senha" tratado pela aplicação e os perfis de "Entrar como".
+ * O reset do realm fica desligado: o link aparece pelo atributo do client.
+ */
+export const WithCandidateLogin: Story = {
+    render: () => (
+        <KcPageStory
+            kcContext={{
+                realm: { resetPasswordAllowed: false },
+                login: { username: "52998224725" },
+                client: {
+                    clientId: "portal-candidato",
+                    attributes: {
+                        "cvt.eyebrow": "Acesso pré-admissional",
+                        "cvt.title": "Entrar no seu processo de admissão",
+                        "cvt.lead": "Use o CPF e a senha do e-mail de convite.",
+                        "cvt.footerNote": "Seu acesso é restrito às etapas de admissão.",
+                        "cvt.usernameLabel": "CPF",
+                        "cvt.usernamePlaceholder": "000.000.000-00",
+                        "cvt.usernameMask": "cpf",
+                        "cvt.forgotPasswordUrl": "https://portal.exemplo.test/pre-admissao/esqueci-senha",
+                        "cvt.profiles": JSON.stringify([
+                            { label: "Departamento pessoal", url: "https://portal.exemplo.test/api/auth/login" },
+                            {
+                                label: "Candidato",
+                                url: "https://portal.exemplo.test/api/auth/login?perfil=candidato",
+                                current: true
+                            }
+                        ])
+                    }
+                }
+            }}
+        />
+    )
+};
+
 /** Atributo em branco não deve apagar o texto: tem de cair no padrão do tema. */
 export const WithBlankClientAttribute: Story = {
     render: () => (

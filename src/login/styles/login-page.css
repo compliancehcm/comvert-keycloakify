@@ -105,6 +105,53 @@
     bottom: calc(100% + var(--space-2));
 }
 
+/* "Entrar como": um chip por perfil (tela de login de outro client). O perfil
+   desta tela fica marcado, sem link. */
+.cvt-profiles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.cvt-profiles__label {
+    font-size: var(--text-14);
+    color: var(--muted-foreground);
+}
+
+.cvt-profiles__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cvt-profiles__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-13);
+    font-weight: var(--weight-semibold);
+    color: var(--muted-foreground);
+    text-decoration: none;
+}
+
+.cvt-profiles__chip:hover,
+.cvt-profiles__chip:focus-visible {
+    background: var(--muted);
+    color: var(--foreground);
+}
+
+.cvt-profiles__chip--current,
+.cvt-profiles__chip--current:hover {
+    border-color: var(--accent-soft-border);
+    background: var(--accent-soft-bg);
+    color: var(--secondary-foreground);
+}
+
 .cvt-login__note {
     font-size: var(--text-13);
     color: var(--muted-foreground);
