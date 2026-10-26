@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useState, type FormEvent, type JSX } from "react";
 import { kcSanitize } from "keycloakify/lib/kcSanitize";
 import { useIsPasswordRevealed } from "keycloakify/tools/useIsPasswordRevealed";
 import { clsx } from "keycloakify/tools/clsx";
@@ -10,7 +10,8 @@ import type { I18n } from "../i18n";
 import { Alert } from "../components/Alert";
 import { EyeIcon, EyeOffIcon, MonitorIcon } from "../components/Icons";
 import { LocaleDropdown } from "../components/LocaleDropdown";
-import { CLIENT_TEXT_KEYS, resolveClientName, resolveClientText } from "../clientText";
+import { CLIENT_LOGIN_KEYS, CLIENT_TEXT_KEYS, resolveClientName, resolveClientProfiles, resolveClientText, resolveClientUrl } from "../clientText";
+import { digitosDoCpf, formatarCpf } from "../cpf";
 
 /* Reimplementação de keycloakify/login/pages/Login, remodelada para o design
    Compliance HCM. Todo o contrato do Keycloak é preservado — nomes de campo, ids,
@@ -78,6 +79,19 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
     const lead = texto(CLIENT_TEXT_KEYS.lead, msgStr("cvtLoginLead"));
     const notaRodape = texto(CLIENT_TEXT_KEYS.footerNote, msgStr("cvtLoginFooterNote"));
 
+    /* Campo de usuário por client: o candidato da pré-admissão entra com o CPF, e
+       o rótulo "E-mail corporativo" do design não serve para ele. */
+    const rotuloUsuario = texto(CLIENT_LOGIN_KEYS.usernameLabel, usesEmailLabel ? msgStr("cvtLoginIdLabel") : msgStr("username"));
+    const exemploUsuario = texto(CLIENT_LOGIN_KEYS.usernamePlaceholder, usesEmailLabel ? msgStr("cvtLoginIdPlaceholder") : "");
+    const mascaraCpf = client?.attributes?.[CLIENT_LOGIN_KEYS.usernameMask] === "cpf";
+
+    /* "Esqueci minha senha" tratado fora do Keycloak, quando o client aponta para
+       onde: vale mesmo com o reset do realm desligado (é o caso do candidato). */
+    const urlEsqueciSenha = resolveClientUrl({ client, key: CLIENT_LOGIN_KEYS.forgotPasswordUrl });
+
+    /* "Entrar como": cada perfil é a tela de login de outro client. */
+    const perfis = resolveClientProfiles(client);
+
     return (
         <Template
             kcContext={kcContext}
@@ -89,9 +103,29 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                renderizado aqui embaixo. Ainda assim passa o valor já resolvido, para
                não haver duas fontes de verdade se o Template passar a usá-lo. */
             headerNode={titulo}
-            displayInfo={showRegistration || showLanguages}
+            displayInfo={showRegistration || showLanguages || perfis.length !== 0}
             infoNode={
                 <div className="cvt-login__footer">
+                    {perfis.length !== 0 && (
+                        <nav className="cvt-profiles" aria-label={msgStr("cvtSignInAs")}>
+                            <span className="cvt-profiles__label">{msg("cvtSignInAs")}</span>
+                            <ul className="cvt-profiles__list">
+                                {perfis.map(perfil => (
+                                    <li key={perfil.url}>
+                                        {perfil.current ? (
+                                            <span className="cvt-profiles__chip cvt-profiles__chip--current" aria-current="page">
+                                                {perfil.label}
+                                            </span>
+                                        ) : (
+                                            <a className="cvt-profiles__chip" href={perfil.url}>
+                                                {perfil.label}
+                                            </a>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    )}
                     {showLanguages && <LocaleDropdown i18n={i18n} kcClsx={kcClsx} className="cvt-login__locale" />}
                     {showRegistration && (
                         <div id="kc-registration-container">
@@ -170,7 +204,15 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                         <form
                             id="kc-form-login"
                             className="cvt-login__form"
-                            onSubmit={() => {
+                            onSubmit={event => {
+                                if (mascaraCpf) {
+                                    /* O usuário no Keycloak é o CPF só com dígitos: a
+                                       máscara é só para leitura na tela. */
+                                    const campo = event.currentTarget.elements.namedItem("username");
+                                    if (campo instanceof HTMLInputElement) {
+                                        campo.value = digitosDoCpf(campo.value);
+                                    }
+                                }
                                 setIsLoginButtonDisabled(true);
                                 return true;
                             }}
@@ -180,15 +222,22 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                             {!usernameHidden && (
                                 <div className={kcClsx("kcFormGroupClass")}>
                                     <label htmlFor="username" className={kcClsx("kcLabelClass")}>
-                                        {usesEmailLabel ? msg("cvtLoginIdLabel") : msg("username")}
+                                        {rotuloUsuario}
                                     </label>
                                     <input
                                         id="username"
                                         className={kcClsx("kcInputClass")}
                                         name="username"
-                                        defaultValue={login.username ?? ""}
+                                        defaultValue={mascaraCpf ? formatarCpf(login.username ?? "") : (login.username ?? "")}
                                         type="text"
-                                        placeholder={usesEmailLabel ? msgStr("cvtLoginIdPlaceholder") : undefined}
+                                        placeholder={exemploUsuario || undefined}
+                                        {...(mascaraCpf && {
+                                            inputMode: "numeric" as const,
+                                            maxLength: 14,
+                                            onInput: (evento: FormEvent<HTMLInputElement>) => {
+                                                evento.currentTarget.value = formatarCpf(evento.currentTarget.value);
+                                            }
+                                        })}
                                         autoFocus
                                         autoComplete={enableWebAuthnConditionalUI ? "username webauthn" : "username"}
                                         aria-invalid={hasFieldError}
@@ -212,8 +261,8 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                                     <label htmlFor="password" className={kcClsx("kcLabelClass")}>
                                         {msg("password")}
                                     </label>
-                                    {realm.resetPasswordAllowed && (
-                                        <a className="cvt-forgot" href={url.loginResetCredentialsUrl}>
+                                    {(urlEsqueciSenha !== undefined || realm.resetPasswordAllowed) && (
+                                        <a className="cvt-forgot" href={urlEsqueciSenha ?? url.loginResetCredentialsUrl}>
                                             {msg("doForgotPassword")}
                                         </a>
                                     )}
