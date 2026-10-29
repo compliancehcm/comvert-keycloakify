@@ -95,10 +95,11 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
         return null;
     }
 
-    const isLoginPage = pageId === "login.ftl";
+    /* O login (e a etapa do usuário, que é a mesma tela quando o realm pede o usuário
+       antes da senha) desenha o próprio cabeçalho e o próprio alerta, na posição que
+       o design pede (o erro fica logo acima do botão, não no topo). */
+    const isLoginPage = pageId === "login.ftl" || pageId === "login-username.ftl";
 
-    /* O login desenha o próprio cabeçalho e o próprio alerta, na posição que o
-       design pede (o erro fica logo acima do botão, não no topo). */
     const content = (
         <>
             {!isLoginPage && (
