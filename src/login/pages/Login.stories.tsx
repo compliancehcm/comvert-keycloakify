@@ -390,10 +390,64 @@ export const WithClientTextOverrides: Story = {
     )
 };
 
+/** Os três perfis de "Entrar como", cada um a tela de login de um client. O
+ *  rótulo vem do bundle pelo `perfil`, então troca junto com o idioma. */
+const perfisDeLogin = (atual: "dp" | "funcionario" | "candidato") =>
+    JSON.stringify(
+        [
+            { perfil: "dp", url: "https://portal.exemplo.test/api/auth/login" },
+            { perfil: "funcionario", url: "https://portal.exemplo.test/api/auth/login?perfil=funcionario" },
+            { perfil: "candidato", url: "https://portal.exemplo.test/api/auth/login?perfil=candidato" }
+        ].map(item => (item.perfil === atual ? { ...item, current: true } : item))
+    );
+
+/**
+ * Tela do departamento pessoal com os perfis de "Entrar como": os textos são os
+ * padrão do tema, só os chips vêm do client.
+ */
+export const WithDpLogin: Story = {
+    render: () => (
+        <KcPageStory
+            kcContext={{
+                client: {
+                    clientId: "comvertportal-bff",
+                    attributes: { "cvt.profiles": perfisDeLogin("dp") }
+                }
+            }}
+        />
+    )
+};
+
+/**
+ * Tela do funcionário: mesmo fluxo do departamento pessoal (e-mail, senha,
+ * empresa), em outro client, com os textos dele em pt-BR e em inglês.
+ */
+export const WithEmployeeLogin: Story = {
+    render: () => (
+        <KcPageStory
+            kcContext={{
+                client: {
+                    clientId: "comvertportal-funcionario",
+                    attributes: {
+                        "cvt.eyebrow": "Acesso do funcionário",
+                        "cvt.eyebrow.en": "Employee access",
+                        "cvt.title": "Entrar na área do funcionário",
+                        "cvt.title.en": "Sign in to the employee area",
+                        "cvt.lead": "Holerites, férias e seus dados cadastrais",
+                        "cvt.lead.en": "Payslips, time off and your personal details",
+                        "cvt.profiles": perfisDeLogin("funcionario")
+                    }
+                }
+            }}
+        />
+    )
+};
+
 /**
  * Tela do candidato da pré-admissão: campo de usuário "CPF" com máscara,
  * "Esqueci minha senha" tratado pela aplicação e os perfis de "Entrar como".
  * O reset do realm fica desligado: o link aparece pelo atributo do client.
+ * Cada texto tem a variante `.en`: troque o idioma da story para conferir.
  */
 export const WithCandidateLogin: Story = {
     render: () => (
@@ -405,21 +459,20 @@ export const WithCandidateLogin: Story = {
                     clientId: "portal-candidato",
                     attributes: {
                         "cvt.eyebrow": "Acesso pré-admissional",
+                        "cvt.eyebrow.en": "Pre-hire access",
                         "cvt.title": "Entrar no seu processo de admissão",
+                        "cvt.title.en": "Sign in to your hiring process",
                         "cvt.lead": "Use o CPF e a senha do e-mail de convite.",
+                        "cvt.lead.en": "Use your CPF and the password from the invitation email.",
                         "cvt.footerNote": "Seu acesso é restrito às etapas de admissão.",
+                        "cvt.footerNote.en": "Your access is limited to the hiring steps.",
+                        "cvt.brand.subtitle": "Pré-admissão",
+                        "cvt.brand.subtitle.en": "Pre-hire",
                         "cvt.usernameLabel": "CPF",
                         "cvt.usernamePlaceholder": "000.000.000-00",
                         "cvt.usernameMask": "cpf",
                         "cvt.forgotPasswordUrl": "https://portal.exemplo.test/pre-admissao/esqueci-senha",
-                        "cvt.profiles": JSON.stringify([
-                            { label: "Departamento pessoal", url: "https://portal.exemplo.test/api/auth/login" },
-                            {
-                                label: "Candidato",
-                                url: "https://portal.exemplo.test/api/auth/login?perfil=candidato",
-                                current: true
-                            }
-                        ])
+                        "cvt.profiles": perfisDeLogin("candidato")
                     }
                 }
             }}

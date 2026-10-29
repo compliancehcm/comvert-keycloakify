@@ -35,6 +35,10 @@ const { useI18n, ofTypeI18n } = i18nBuilder
             cvtLoginFooterNote: "Acesso monitorado e registrado em log de auditoria.",
             cvtOr: "ou",
             cvtSignInAs: "Entrar como",
+            // Rótulos dos perfis conhecidos de "Entrar como" (cvt.profiles com "perfil").
+            cvtProfileDp: "Departamento pessoal",
+            cvtProfileFuncionario: "Funcionário",
+            cvtProfileCandidato: "Candidato",
 
             // --- Botao de tema ---
             cvtThemeToggle: "Tema",
@@ -71,6 +75,9 @@ const { useI18n, ofTypeI18n } = i18nBuilder
             cvtLoginFooterNote: "Access is monitored and recorded in the audit log.",
             cvtOr: "or",
             cvtSignInAs: "Sign in as",
+            cvtProfileDp: "HR department",
+            cvtProfileFuncionario: "Employee",
+            cvtProfileCandidato: "Candidate",
 
             cvtThemeToggle: "Theme",
             cvtThemeSystem: "system",

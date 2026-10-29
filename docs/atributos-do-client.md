@@ -59,24 +59,40 @@ Ordem de resolução de cada texto:
 
 Os dois primeiros são texto e aceitam a variante por idioma (`cvt.usernameLabel.en`). Os endereços só valem com `http`/`https`; qualquer outra coisa é ignorada (o atributo vira `href`).
 
-`cvt.profiles` é uma lista JSON, um item por tela de login — cada perfil é um client. O da tela atual leva `"current": true` e aparece marcado, sem link:
+`cvt.profiles` é uma lista JSON, um item por tela de login — cada perfil é um client. O da tela atual leva `"current": true` e aparece marcado, sem link. Em cada client a lista é a mesma; só muda qual item é o `current`:
 
 ```json
 [
-    { "label": "Departamento pessoal", "url": "https://portal/api/auth/login" },
+    { "perfil": "dp", "url": "https://portal/api/auth/login" },
     {
-        "label": "Candidato",
+        "perfil": "funcionario",
+        "url": "https://portal/api/auth/login?perfil=funcionario"
+    },
+    {
+        "perfil": "candidato",
         "url": "https://portal/api/auth/login?perfil=candidato",
         "current": true
     }
 ]
 ```
 
-A `url` deve iniciar o login **pela aplicação** (no Comvert Portal, `/api/auth/login?perfil=…`), não ir direto ao Keycloak: é a aplicação que monta o pedido de autorização (PKCE, state). JSON ilegível ou item sem `label`/`url` válida é descartado — a tela segue sem os chips em vez de quebrar.
+O rótulo de cada chip sai do `perfil`, que o tema traduz pelo bundle de i18n:
+
+| `perfil`      | pt-BR                  | en              |
+| ------------- | ---------------------- | --------------- |
+| `dp`          | `Departamento pessoal` | `HR department` |
+| `funcionario` | `Funcionário`          | `Employee`      |
+| `candidato`   | `Candidato`            | `Candidate`     |
+
+Para um perfil fora da tabela, use `"label": "..."` no lugar de `perfil` (com os dois, o `label` vence). O `label` é uma string só, **não troca com o idioma** — por isso prefira o `perfil` e, para um perfil novo, acrescente a chave `cvtProfile…` no bundle.
+
+A `url` deve iniciar o login **pela aplicação** (no Comvert Portal, `/api/auth/login?perfil=…`), não ir direto ao Keycloak: é a aplicação que monta o pedido de autorização (PKCE, state). JSON ilegível, ou item sem rótulo (`perfil` conhecido ou `label`) ou sem `url` válida, é descartado — a tela segue sem os chips em vez de quebrar.
 
 ## Variação por idioma
 
 Atributo de client **não é traduzido** pelo Keycloak — é uma string só. Para variar por idioma, sufixe a chave com a tag do locale:
+
+> **Todo texto sobrescrito precisa da variante de cada idioma do realm.** Sem `cvt.title.en`, a tela em inglês mostra o `cvt.title` em português: o tema não tem como traduzir o que veio do client. Os padrões do tema (sem atributo) já vêm traduzidos.
 
 ```
 cvt.eyebrow        -> Acesso da folha        (usado em pt-BR e em qualquer idioma sem variante)
@@ -201,7 +217,7 @@ No JSON do realm, dentro do client:
 - [`src/login/pages/Login.tsx`](../src/login/pages/Login.tsx) — a coluna do formulário
 - [`src/login/Template.tsx`](../src/login/Template.tsx) — o painel de marca
 - [`src/login/cpf.ts`](../src/login/cpf.ts) — a máscara de CPF
-- Stories no Storybook: `WithClientTextOverrides`, `WithClientNameAsTitle`, `WithBlankClientAttribute`, `WithCandidateLogin`
+- Stories no Storybook: `WithClientTextOverrides`, `WithClientNameAsTitle`, `WithBlankClientAttribute`, `WithDpLogin`, `WithEmployeeLogin`, `WithCandidateLogin`
 
 ---
 
