@@ -5,6 +5,7 @@ import { useI18n } from "./i18n";
 import DefaultPage from "keycloakify/login/DefaultPage";
 import Template from "./Template";
 import Login from "./pages/Login";
+import LoginUsername from "./pages/LoginUsername";
 import { initializeThemePreference } from "./themePreference";
 import "./main.css";
 const UserProfileFormFields = lazy(
@@ -44,6 +45,18 @@ export default function KcPage(props: { kcContext: KcContext }) {
                         // chunk separado custaria um round trip na única URL que importa.
                         return (
                             <Login
+                                kcContext={kcContext}
+                                i18n={i18n}
+                                classes={classes}
+                                Template={Template}
+                                doUseDefaultCss={doUseDefaultCss}
+                            />
+                        );
+                    case "login-username.ftl":
+                        // A primeira tela de login com Organizations ligado no realm:
+                        // estática pelo mesmo motivo do login.ftl.
+                        return (
+                            <LoginUsername
                                 kcContext={kcContext}
                                 i18n={i18n}
                                 classes={classes}
