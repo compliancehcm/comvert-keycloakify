@@ -72,9 +72,26 @@ export const CLIENT_LOGIN_KEYS = {
     usernameMask: `${PREFIX}usernameMask`,
     /** Endereço do "Esqueci minha senha" fora do Keycloak (a aplicação trata). */
     forgotPasswordUrl: `${PREFIX}forgotPasswordUrl`,
-    /** JSON com os perfis de "Entrar como": [{"label","url","current"?}]. */
+    /** JSON com os perfis de "Entrar como": [{"perfil"|"label","url","current"?}]. */
     profiles: `${PREFIX}profiles`
 } as const;
+
+/** Os perfis de "Entrar como" que o tema conhece: o rótulo vem do bundle de i18n,
+ *  então troca junto com o idioma da tela. Rótulo livre (`label`) é uma string só. */
+export const PERFIS_CONHECIDOS = {
+    dp: "cvtProfileDp",
+    funcionario: "cvtProfileFuncionario",
+    candidato: "cvtProfileCandidato"
+} as const;
+
+export type PerfilConhecido = keyof typeof PERFIS_CONHECIDOS;
+
+function ehPerfilConhecido(valor: unknown): valor is PerfilConhecido {
+    return (
+        typeof valor === "string" &&
+        Object.prototype.hasOwnProperty.call(PERFIS_CONHECIDOS, valor)
+    );
+}
 
 /** Um perfil de "Entrar como": cada um é uma tela de login (um client). */
 export type ClientProfile = {
@@ -180,11 +197,18 @@ export function resolveClientUrl(params: {
 }
 
 /**
- * Os perfis de "Entrar como", do JSON em `cvt.profiles`. Entrada sem `label` ou
- * com `url` inválida é descartada; JSON ilegível vira lista vazia (a tela segue
- * sem os perfis, em vez de quebrar o login inteiro por um erro de configuração).
+ * Os perfis de "Entrar como", do JSON em `cvt.profiles`. Cada item traz um
+ * `perfil` conhecido (o rótulo sai do bundle, traduzido) ou um `label` livre; os
+ * dois juntos, o `label` vence. Item sem rótulo ou com `url` inválida é
+ * descartado; JSON ilegível vira lista vazia (a tela segue sem os perfis, em vez
+ * de quebrar o login inteiro por um erro de configuração).
  */
-export function resolveClientProfiles(client: ClientLike | undefined): ClientProfile[] {
+export function resolveClientProfiles(params: {
+    client: ClientLike | undefined;
+    rotuloDoPerfil: (perfil: PerfilConhecido) => string;
+}): ClientProfile[] {
+    const { client, rotuloDoPerfil } = params;
+
     const bruto = client?.attributes?.[CLIENT_LOGIN_KEYS.profiles];
     if (typeof bruto !== "string" || bruto.trim() === "") {
         return [];
@@ -204,11 +228,17 @@ export function resolveClientProfiles(client: ClientLike | undefined): ClientPro
         if (typeof item !== "object" || item === null) {
             return [];
         }
-        const { label, url, current } = item as Record<string, unknown>;
+        const { perfil, label, url, current } = item as Record<string, unknown>;
         const href = urlSegura(url);
-        if (typeof label !== "string" || label.trim() === "" || href === undefined) {
+        const rotulo =
+            typeof label === "string" && label.trim() !== ""
+                ? label.trim()
+                : ehPerfilConhecido(perfil)
+                  ? rotuloDoPerfil(perfil)
+                  : undefined;
+        if (rotulo === undefined || href === undefined) {
             return [];
         }
-        return [{ label: label.trim(), url: href, current: current === true }];
+        return [{ label: rotulo, url: href, current: current === true }];
     });
 }

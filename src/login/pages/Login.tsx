@@ -10,7 +10,15 @@ import type { I18n } from "../i18n";
 import { Alert } from "../components/Alert";
 import { EyeIcon, EyeOffIcon, MonitorIcon } from "../components/Icons";
 import { LocaleDropdown } from "../components/LocaleDropdown";
-import { CLIENT_LOGIN_KEYS, CLIENT_TEXT_KEYS, resolveClientName, resolveClientProfiles, resolveClientText, resolveClientUrl } from "../clientText";
+import {
+    CLIENT_LOGIN_KEYS,
+    CLIENT_TEXT_KEYS,
+    PERFIS_CONHECIDOS,
+    resolveClientName,
+    resolveClientProfiles,
+    resolveClientText,
+    resolveClientUrl
+} from "../clientText";
 import { digitosDoCpf, formatarCpf } from "../cpf";
 
 /* Reimplementação de keycloakify/login/pages/Login, remodelada para o design
@@ -89,8 +97,9 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
        onde: vale mesmo com o reset do realm desligado (é o caso do candidato). */
     const urlEsqueciSenha = resolveClientUrl({ client, key: CLIENT_LOGIN_KEYS.forgotPasswordUrl });
 
-    /* "Entrar como": cada perfil é a tela de login de outro client. */
-    const perfis = resolveClientProfiles(client);
+    /* "Entrar como": cada perfil é a tela de login de outro client. O rótulo dos
+       perfis conhecidos vem do bundle, para trocar junto com o idioma. */
+    const perfis = resolveClientProfiles({ client, rotuloDoPerfil: perfil => msgStr(PERFIS_CONHECIDOS[perfil]) });
 
     return (
         <Template
